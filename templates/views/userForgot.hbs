@@ -1,0 +1,57 @@
+{{>userHeader}}
+
+<form action="#" method="post">
+
+    <div class="row">
+        <div class="col-md-4">
+            <div class="form-group first">
+                <label for="lname">E-mail address *</label>
+                <input type="text" class="form-control" placeholder="e.g. https://google.com" id="lname">
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group first">
+                <label for="fname" style="color: aliceblue;"> .</label>
+                <input type="submit" value="Get OTP" class="btn px-4 btn-primary mt-4">
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group first">
+                <label for="lname">Enter OTP *</label>
+                <input type="text" class="form-control" placeholder="OTP" id="lname">
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group first">
+                <label for="fname" style="color: aliceblue;"> .</label>
+                <input type="submit" value="Varify" class="btn px-4 btn-primary mt-4">
+            </div>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-6">
+
+            <div class="form-group last mb-3">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" placeholder="Your Password" id="password">
+            </div>
+        </div>
+        <div class="col-md-6">
+
+            <div class="form-group last mb-3">
+                <label for="re-password">Re-type Password</label>
+                <input type="password" class="form-control" placeholder="Your Password" id="re-password">
+            </div>
+        </div>
+    </div>
+
+
+    <input type="submit" value="Update" class="btn px-5 btn-primary">
+
+</form>
+
+{{>userFooter}}

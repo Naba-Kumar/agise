@@ -1,0 +1,144 @@
+
+{{>userHeader}}
+
+<form id="registerForm" action="/user/" method="POST" enctype="multipart/form-data">
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="form-group first">
+                <label for="fname">First Name *</label>
+                <input type="text" class="form-control" placeholder="First Name" id="fname" name="first_name">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group first">
+                <label for="lname">Last Name *</label>
+                <input type="text" class="form-control" placeholder="Last Name" id="lname" name="last_name">
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="form-group first">
+                <label for="fname">Mobile No *</label>
+                <input type="text" class="form-control" placeholder="8486xxx644" id="phone" name="mobile">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group first">
+                <label for="lname">Organization Name *</label>
+                <input type="text" class="form-control" placeholder="Your Organization" id="organization" name="organization">
+            </div>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6">
+            <div class="form-group first">
+                <label for="fname">Department *</label>
+                <input type="text" class="form-control" placeholder="Your department" id="department" name="department">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="form-group first">
+                <label for="lname">Designation *</label>
+                <input type="text" class="form-control" placeholder="Your designation" id="designation" name="designation">
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-4">
+            <div class="form-group first">
+                <label for="lname">E-mail address *</label>
+                <input type="text" class="form-control" placeholder="example@xyz.com" id="email" name="email">
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group first">
+                <input type="submit" name="submit" value="GetOTP" class="  btn px-4 btn-primary mt-4" > 
+
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group first">
+                <label for="lname">Enter OTP *</label>
+                <input type="text" class="form-control" placeholder="6 digit otp" id="otp" name="otp">
+                <!-- btn px-5 btn-primary  m-2 -->
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group first">
+                <input type="submit" name="submit" value="Verify" class="btn px-4 btn-primary  mt-4">
+                <!-- <input type="submit" value="Register" class="btn px-5 btn-primary  m-2"> -->
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-6">
+
+            <div class="form-group first">
+                <label for="id-proof">Upload Your ID Proof[.png, .jpg, .jpeg] *</label>
+                <input type="file" class="form-control" id="id-proof" name="id_proof">
+            </div>
+        </div>
+        <div class="col-md-6">
+
+            <div class="form-group first">
+                <label for="user-type">User Type *</label>
+                <select class="form-control" id="user-type" name="user_type">
+                    <option value="">Select User Type</option>
+                    <option value="researcher">Researcher</option>
+                    <option value="govt-employee">Government Employee</option>
+                    <option value="private-employee">Private Employee</option>
+                    <option value="college-institute">College/Institute</option>
+                </select>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mt-3">
+        <div class="col-md-12">
+
+            <div class="form-group last mb-3">
+                <label for="password">About You</label>
+                <textarea type="text" class="form-control" placeholder="About You..." id="about" name="about"></textarea>
+            </div>
+        </div>
+
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-6">
+
+            <div class="form-group last mb-3">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" placeholder="Your Password" id="password" name="password">
+            </div>
+        </div>
+        <div class="col-md-6">
+
+            <div class="form-group last mb-3">
+                <label for="re-password">Re-type Password</label>
+                <input type="password" class="form-control" placeholder="re-Password" id="re_password" name="re_password">
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="d-flex  mt-2 align-items-center">
+        <div class="d-flex align-items-center">
+                <input type="checkbox" checked="checked" />
+                <div class="control__indicator"></div>
+            <label class="control control--checkbox mb-0"><span class="caption">Creating an account means you're
+                    okay with our <a href="#">Terms and Conditions</a> and our <a href="#">Privacy Policy</a>.</span>
+            </label>
+        </div>
+    </div>
+
+    <input type="submit" name="submit" value="Register" class="btn px-5 btn-primary mt-2">
+
+</form>
+
+{{>userFooter}}

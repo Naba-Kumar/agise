@@ -1,0 +1,58 @@
+
+{{>userHeader}}
+
+<form action="#" method="post">
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="form-group first">
+                <label for="fname">Email *</label>
+                <input type="text" class="form-control" placeholder="e.g. John" id="fname">
+            </div>
+        </div>
+    </div>
+    {{!-- <div class="row mt-3">
+        <div class="col-md-4">
+            <div class="form-group first">
+                <label for="lname">E-mail address *</label>
+                <input type="text" class="form-control" placeholder="e.g. https://google.com" id="lname">
+            </div>
+        </div>
+
+        <div class="col-md-2">
+            <div class="form-group first">
+                <input type="submit" value="Get OTP" class="  btn px-4 btn-primary mt-4 "> 
+
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="form-group first">
+                <label for="lname">Enter OTP *</label>
+                <input type="text" class="form-control" placeholder="OTP" id="lname">
+                <!-- btn px-5 btn-primary  m-2 -->
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="form-group first">
+                <input type="submit" value="Varify" class="btn px-4 btn-primary  mt-4">
+                <!-- <input type="submit" value="Register" class="btn px-5 btn-primary  m-2"> -->
+            </div>
+        </div>
+    </div> --}}
+
+    <div class="row">
+        <div class="col-md-12 mt-2">
+            <div class="form-group first">
+                <label for="fname">password*</label>
+                <input type="text" class="form-control" placeholder="e.g. John" id="fname">
+            </div>
+        </div>
+    </div>
+
+
+    <input type="submit" value="Login" class="btn px-5 btn-primary mt-2" >
+    <a href="/forgot">Forgot Password</a>
+
+</form>
+{{>userFooter}}
