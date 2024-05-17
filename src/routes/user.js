@@ -69,8 +69,8 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
         try {
 
             if (!validator.isEmail(email)) {
-                const data = { message: 'Please enter valid email' };
-                return res.status(500).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                const data = { message: 'Please enter valid email', title: "Alert", icon: "danger" };
+                return res.status(400).json(data);
             }
 
 
@@ -78,6 +78,11 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
             const otp = Math.floor(100000 + Math.random() * 900000);
 
             const client = await pool.poolUser.connect();
+
+            // Delete the existing OTP for the email
+            await client.query(`DELETE FROM emailotp WHERE email = $1`, [email]);
+
+            // Insert the new OTP for the email
             await client.query(`INSERT INTO emailotp (email, otp) VALUES ($1, $2)`, [email, otp]);
             client.release();
 
@@ -91,8 +96,8 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
                 text: `Your OTP for Registration ASSAM GIS EXPLORER is: ${otp}`
             });
 
-            const data = { message: 'OTP sent successfully' };
-            res.status(500).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+            const data = { message: 'OTP sent successfully', title: "Sent", icon: "success" };
+            return res.status(400).json(data);
 
 
 
@@ -100,7 +105,8 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
             console.error('Error in sending OTP via email:', err);
             const error = { message: 'something went wrong' };
 
-            res.status(500).send('<script>alert("' + error.message + '");window.location.href = window.location.href;</script>');
+            const data = { message: 'something went wrong, Try again!', title: "Error", icon: "danger" };
+            return res.status(400).json(data);
         }
     }
 
@@ -113,10 +119,11 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
             const email = req.body.email;
             const clientotp = req.body.otp;
 
-            if(!email || !clientotp){
-                const data = { message: 'Fill The Field Email , OTP First' };
+            if (!email || !clientotp) {
 
-                return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                const data = { message: 'Fill The Fields Email and  OTP First', title: "Alert", icon: "warning" };
+                return res.status(400).json(data);
+
 
             }
 
@@ -131,7 +138,6 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
             const storedOtp = dbotp.toString();
             console.log(`REsult - ${result}`)
 
-            client.release();
 
             console.log(`client otp - ${typeof (clientotp)}`)
             console.log(`stored otp - ${typeof (storedOtp)}`)
@@ -144,27 +150,28 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
             if (clientotp === storedOtp) {
 
                 const client = await pool.poolUser.connect();
-                const result = await client.query(`INSERT INTO verifiedemails (email) VALUES ($1)`, [email]);
-                // const storedOtp = result.rows[0].otp;
-                // await client.query('DELETE FROM emailotp WHERE EMAIL = $1', [email]);
-                // client.release();
-                // res.status(200).send({ message: 'OTP verified successfully' });
 
-                const data = { message: 'OTP verified successfully' };
-                res.status(200).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                // Delete the existing OTP for the email
+                await client.query(`DELETE FROM verifiedemails WHERE email = $1`, [email]);
 
+                // Insert the new OTP for the email
+                await client.query(`INSERT INTO verifiedemails (email) VALUES ($1)`, [email]);
+
+                const data = { message: 'OTP verified successfully', title: "Varified", icon: "success" };
+                client.release();
+                return res.status(400).json(data);
 
             } else {
-                const data = { message: 'Invalid OTP' };
-                res.status(200).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                const data = { message: 'Invalid OTP', title: "Alert", icon: "danger" };
+                return res.status(400).json(data);
 
                 // res.status(400).send({ error: 'Invalid OTP' });
             }
         } catch (err) {
-            const data = { message: 'Somthing Went Wrong' };
-            res.status(500).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
-
+            const data = { message: 'Somthing Went Wrong, Try again!', title: "Error", icon: "danger" };
             console.error('Error in OTP verification:', err);
+            return res.status(400).json(data);
+
             // res.status(500).send({ error: 'Internal Server Error' });
         }
 
@@ -192,32 +199,54 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
 
 
             if (!first_name || !last_name || !mobile || !organization || !department || !designation || !email || !user_type || !about || !password) {
-                const data = { message: 'All fields are required' };
-                return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                const data = { message: 'All fields are required', title: "Warning", icon: "warning" };
+                // return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                return res.json(data)
             }
             if (!phone(req.body.mobile, { country: 'IND' })) {
-                const data = { message: 'Enter Valid Email' };
-                return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                const data = { message: 'Enter Valid Email', title: "Warning", icon: "warning" };
+                res.status(400);
+                return res.json(data)
             }
 
             const client = await pool.poolUser.connect();
-            const result = await client.query(`SELECT otp FROM emailotp WHERE email = $1`, [email]);
-           
+            const otpresult = await client.query(`SELECT otp FROM emailotp WHERE email = $1`, [email]);
 
-            const dbotp = result.rows[0].otp;
+
+            const dbotp = otpresult.rows[0].otp;
             const storedOtp = dbotp.toString();
             const clientotp = req.body.otp;
 
             if (clientotp != storedOtp) {
-                const data = { message: 'Verify OTP first' };
-                return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                const data = { message: 'Verify OTP first', title: "Alert", icon: "danger" };
+                return res.status(400).json(data);
             }
+
+
+            const regresult = await client.query(`SELECT * FROM registered WHERE email = $1`, [email]);
+            const regemail = regresult.rows[0].email;
+            if (regemail.length < 1) {
+                const data = { message: 'Email already registered', title: "Alert", icon: "warning" };
+                return res.status(400).json(data);
+
+            }
+            // const storedOtp = dbotp.toString();
+            // const clientotp = req.body.otp;
+
+
+
 
             const id_proof = fs.readFileSync(req.file.path);
 
             if (!id_proof) {
-                const data = { message: 'Upload Valid Id proof' };
-                return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                const data = { message: 'Upload Valid Id proof', title: "Alert", icon: "warning" };
+                return res.status(400).json(data);
+            }
+
+            const re_password = req.body.re_password;
+            if (password === re_password) {
+                const data = { message: 'Password Mismatch', title: "Alert", icon: "warning" };
+                return res.status(400).json(data);
             }
 
             console.log(req.file.path)
@@ -246,11 +275,13 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
             await client.query(query, values);
             client.release();
 
-            const data = { message: 'Registered successfully' };
-            res.status(200).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+            const data = { message: 'You Are Registered Successfully', title: "Registered", icon: "success" };
+            return res.status(400).json(data);
+
         } catch (error) {
+            const data = { message: 'Something Went Wrong! try again', title: "Wrong", icon: "danger" };
             console.error('Error inserting data:', error);
-            res.status(500).send('Something Went Wrong! try again');
+            return res.status(400).json(data);
 
         }
         // const data = {message: 'Something not Went Wrong!'}

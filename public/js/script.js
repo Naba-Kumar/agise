@@ -31,62 +31,36 @@ if (isLight()) {
 }
 
 
-
-
-const formid = document.getElementById("registerForm");
-
-// Function to validate password match
-function validatePassword() {
-    var password = document.getElementById("password").value;
-    var rePassword = document.getElementById("re_password").value;
-    var errorSpan = document.getElementById("passwordError");
-
-    if (password !== rePassword) {
-        errorSpan.textContent = "Passwords do not match!";
-        alert('Passwords do not match!');
-
-        return false;
-    } else {
-        errorSpan.textContent = "";
-        return true;
-    }
-}
-
-
-function validateForm() {
-    for (var i = 0; i < formid.elements.length; i++) {
-        if (formid.elements[i].value === '' && formid.elements[i].hasAttribute('required')) {
-            alert('There are some required fields!');
-            return false;
-        }
-    }
-    return true;
-
-}
+console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhuuuuuuuuuuuuuuuuuuuuuop");
 
 
 
-formid.addEventListener("submit", function (event) {
-    // Retrieve the value of the action input field
-    var action = document.getElementById("action").value;
-    if (action === "Register") {
-        // Check if action is "register"
+document.getElementById('registerForm').addEventListener('submit', function (e) {
+    e.preventDefault(); // Prevent the default form submission
 
-        if (!validateForm() || !validatePassword()) {
-            event.preventDefault(); // Prevent form submission if passwords do not match
-        }
-    
-    }
+    const formData = new FormData(this); // Create a FormData object from the form
+    const clickedButtonValue = e.submitter.value;
+    formData.append('submit', clickedButtonValue);
+    console.log(formData)
+
+    fetch('/user', { // Send the FormData object to the "/" route
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data.success) {
+                Swal.fire({
+                    title: 'Success!',
+                    text: "data.message",
+                    icon: 'success'
+                });
+            } // Handle the response data
+        })
+        .catch(error => {
+            console.error('Error:', error); // Handle any errors
+        });
 });
 
 
-
-
-
-console.log("alertttttttttttt")
-for (var i = 0; i < formid.elements.length; i++) {
-    if (formid.elements[i].value === '' && formid.elements[i].hasAttribute('required')) {
-        alert('There are some required fields!');
-        return false;
-    }
-}

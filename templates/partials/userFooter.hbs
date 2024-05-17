@@ -13,32 +13,38 @@
 <script src="js/jquery-3.3.1.min.js"></script> --}}
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
-<script src="js/main.js"></script>
+<script src="/js/script.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
-  document.addEventListener('DOMContentLoaded', function () {
-    fetch('/user')
-      .then(response => response.json())
-      .then(data => {
-        Swal.fire({
-          icon: data.icon,
-          title: data.title,
-          text: data.message,
-          confirmButtonColor: '#3085d6',
-          confirmButtonText: 'OK'
-        }).then((result) => {
-          if (result.isConfirmed) {
-            // Redirect to the same page or perform other actions
-            window.location.href = '/';
-          }
+  document.getElementById('registerForm').addEventListener('submit', function (e) {
+    e.preventDefault(); // Prevent the default form submission
+
+    const formData = new FormData(this); // Create a FormData object from the form
+    const clickedButtonValue = e.submitter.value;
+    formData.append('submit', clickedButtonValue);
+    console.log(formData)
+
+    fetch('/user', { // Send the FormData object to the "/" route
+        method: 'POST',
+        body: formData
+    })
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            if (data) {
+                Swal.fire({
+                    title: data.title,
+                    text: data.message,
+                    icon: data.icon
+                });
+            } // Handle the response data
+        })
+        .catch(error => {
+            console.error('Error:', error); // Handle any errors
         });
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        // Handle error, display alternative message, etc.
-      });
-  });
+});
+
 </script>
 
 </body>
