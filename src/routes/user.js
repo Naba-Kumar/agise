@@ -9,8 +9,11 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 const validator = require('validator')
-const { phone } = require('phone');
+const bcrypt = require('bcryptjs');
 
+var passwordValidator = require('password-validator');
+// Create a schema
+var schema = new passwordValidator();
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
@@ -93,7 +96,7 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
                 from: process.env.email,
                 to: req.body.email,
                 subject: 'OTP for Registration AGISE',
-                text: `Your OTP for Registration ASSAM GIS EXPLORER is: ${otp}`
+                text: `${otp} : is Your OTP for Registration ASSAM GIS EXPLORER . ASSAM STATE SPACE APPLICATION CENTER`
             });
 
             const data = { message: 'OTP sent successfully', title: "Sent", icon: "success" };
@@ -198,63 +201,97 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
         try {
 
 
+            
+            
+            
             if (!first_name || !last_name || !mobile || !organization || !department || !designation || !email || !user_type || !about || !password) {
                 const data = { message: 'All fields are required', title: "Warning", icon: "warning" };
                 // return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
                 return res.json(data)
             }
-            if (!phone(req.body.mobile, { country: 'IND' })) {
-                const data = { message: 'Enter Valid Email', title: "Warning", icon: "warning" };
+            
+            const validateIndianPhoneNumber = (mobile) => {
+                const phoneRegex = /^[6-9]\d{9}$/;
+                return phoneRegex.test(mobile);
+            };
+            
+            if (!validateIndianPhoneNumber(mobile)) {
+                const data = { message: 'Enter Valid Phone number!', title: "Warning", icon: "warning" };
                 res.status(400);
                 return res.json(data)
             }
 
             const client = await pool.poolUser.connect();
             const otpresult = await client.query(`SELECT otp FROM emailotp WHERE email = $1`, [email]);
+            
 
-
+            if (otpresult.rows == 0) {
+                const data = { message: 'Verify OTP first', title: "Alert", icon: "danger" };
+                return res.status(400).json(data);
+            }
             const dbotp = otpresult.rows[0].otp;
             const storedOtp = dbotp.toString();
             const clientotp = req.body.otp;
-
+            
             if (clientotp != storedOtp) {
                 const data = { message: 'Verify OTP first', title: "Alert", icon: "danger" };
                 return res.status(400).json(data);
             }
 
-
+            
             const regresult = await client.query(`SELECT * FROM registered WHERE email = $1`, [email]);
-            const regemail = regresult.rows[0].email;
-            if (regemail.length < 1) {
+            console.log(`-->${regresult.rows == 0}`)
+            // const regemail = regresult.rows[0].email;
+            if (regresult.rows != 0) {
                 const data = { message: 'Email already registered', title: "Alert", icon: "warning" };
                 return res.status(400).json(data);
-
+                
             }
             // const storedOtp = dbotp.toString();
             // const clientotp = req.body.otp;
+            
+            
 
-
-
-
+            
             const id_proof = fs.readFileSync(req.file.path);
-
+            
             if (!id_proof) {
                 const data = { message: 'Upload Valid Id proof', title: "Alert", icon: "warning" };
                 return res.status(400).json(data);
             }
 
+            // Add properties to it
+            schema
+                .is().min(8)                                    // Minimum length 8
+                .is().max(100)                                  // Maximum length 100
+                .has().uppercase()                              // Must have uppercase letters
+                .has().lowercase()                              // Must have lowercase letters
+                .has().digits(2)                                // Must have at least 2 digits
+                .has().not().spaces()                           // Should not have spaces
+                .has().symbols()                                // Must have at least one special character
+
+            // Validate password function
+            const validatePassword = (password) => {
+                return schema.validate(password, { details: true });
+            };
             const re_password = req.body.re_password;
-            if (password === re_password) {
+            
+            if (password != re_password) {
                 const data = { message: 'Password Mismatch', title: "Alert", icon: "warning" };
                 return res.status(400).json(data);
             }
+            if (validatePassword(password).length != 0){
+                const data = { message: 'Minimum length 8 || Must have uppercase letters || Must have lowercase letters || Must have at least 2 digits || Should not have spaces || Must have at least one special character', title: "Password criteria", icon: "warning" };
+                return res.status(400).json(data);
+            }
 
-            console.log(req.file.path)
+                console.log(req.file.path)
             // Insert data into PostgreSQL database
             const query = `
             INSERT INTO registered ( first_name, last_name, mobile, organization, department, designation, email, user_type, about, password, id_proof)
             VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
                 `;
+            const hash_pw = bcrypt.hashSync(req.body.password, 10);
             const values = [
                 first_name,
                 last_name,
@@ -265,9 +302,10 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
                 email,
                 user_type,
                 about,
-                password,
+                hash_pw,
                 id_proof
             ];
+
 
             // if (clientotp) {
             // console.log(`Result - ${result}`)
