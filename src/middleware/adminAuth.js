@@ -1,16 +1,23 @@
-// authMiddleware.js
+
+
+
 const jwt = require('jsonwebtoken');
-const secretKey = 'your-secret-key'; // Store this securely
+require('dotenv').config();
 
-const authenticateToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(' ')[1];
-  if (!token) return res.status(401).send('Unauthorized');
+const adminAuthMiddleware = (req, res, next) => {
+  const token = req.cookies.token;
 
-  jwt.verify(token, secretKey, (err, user) => {
-    if (err) return res.status(403).send('Invalid token');
-    req.user = user;
+  if (!token) {
+    return res.status(401).send({ error: 'Access denied' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = decoded;
     next();
-  });
+  } catch (err) {
+    res.status(400).send({ error: 'Invalid token' });
+  }
 };
 
-module.exports = authenticateToken;
+module.exports = adminAuthMiddleware;

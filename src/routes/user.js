@@ -10,7 +10,8 @@ const path = require('path');
 const fs = require('fs');
 const validator = require('validator')
 const bcrypt = require('bcryptjs');
-
+const userAuthMiddleware = require("../middleware/userAuth")
+const jwt = require('jsonwebtoken');
 var passwordValidator = require('password-validator');
 // Create a schema
 var schema = new passwordValidator();
@@ -201,20 +202,20 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
         try {
 
 
-            
-            
-            
+
+
+
             if (!first_name || !last_name || !mobile || !organization || !department || !designation || !email || !user_type || !about || !password) {
                 const data = { message: 'All fields are required', title: "Warning", icon: "warning" };
                 // return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
                 return res.json(data)
             }
-            
+
             const validateIndianPhoneNumber = (mobile) => {
                 const phoneRegex = /^[6-9]\d{9}$/;
                 return phoneRegex.test(mobile);
             };
-            
+
             if (!validateIndianPhoneNumber(mobile)) {
                 const data = { message: 'Enter Valid Phone number!', title: "Warning", icon: "warning" };
                 res.status(400);
@@ -223,7 +224,7 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
 
             const client = await pool.poolUser.connect();
             const otpresult = await client.query(`SELECT otp FROM emailotp WHERE email = $1`, [email]);
-            
+
 
             if (otpresult.rows == 0) {
                 const data = { message: 'Verify OTP first', title: "Alert", icon: "danger" };
@@ -232,29 +233,29 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
             const dbotp = otpresult.rows[0].otp;
             const storedOtp = dbotp.toString();
             const clientotp = req.body.otp;
-            
+
             if (clientotp != storedOtp) {
                 const data = { message: 'Verify OTP first', title: "Alert", icon: "danger" };
                 return res.status(400).json(data);
             }
 
-            
+
             const regresult = await client.query(`SELECT * FROM registered WHERE email = $1`, [email]);
             console.log(`-->${regresult.rows == 0}`)
             // const regemail = regresult.rows[0].email;
             if (regresult.rows != 0) {
                 const data = { message: 'Email already registered', title: "Alert", icon: "warning" };
                 return res.status(400).json(data);
-                
+
             }
             // const storedOtp = dbotp.toString();
             // const clientotp = req.body.otp;
-            
-            
 
-            
+
+
+
             const id_proof = fs.readFileSync(req.file.path);
-            
+
             if (!id_proof) {
                 const data = { message: 'Upload Valid Id proof', title: "Alert", icon: "warning" };
                 return res.status(400).json(data);
@@ -275,17 +276,17 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
                 return schema.validate(password, { details: true });
             };
             const re_password = req.body.re_password;
-            
+
             if (password != re_password) {
                 const data = { message: 'Password Mismatch', title: "Alert", icon: "warning" };
                 return res.status(400).json(data);
             }
-            if (validatePassword(password).length != 0){
+            if (validatePassword(password).length != 0) {
                 const data = { message: 'Minimum length 8 || Must have uppercase letters || Must have lowercase letters || Must have at least 2 digits || Should not have spaces || Must have at least one special character', title: "Password criteria", icon: "warning" };
                 return res.status(400).json(data);
             }
 
-                console.log(req.file.path)
+            console.log(req.file.path)
             // Insert data into PostgreSQL database
             const query = `
             INSERT INTO registered ( first_name, last_name, mobile, organization, department, designation, email, user_type, about, password, id_proof)
@@ -348,11 +349,172 @@ router.get('/login', (req, res) => {
     res.render("userLogin");
 
 });
-router.post('/logn', (req, res) => {
-    // Your OpenLayers logic here
-    // res.render("login");
+
+
+router.post('/login', upload.single('id_proof'), async(req, res) => {
+
+    const {
+
+        email,
+        otp,
+        password
+    } = req.body;
+    console.log(req.body)
+
+    const action = req.body.submit;
+    console.log(action)
+
+
+
+    if (action === "GetOTP") {
+        console.log("click getopt")
+        // Handle action 1
+        const email = req.body.email;
+
+        try {
+            const user = await client.query('SELECT * FROM registered WHERE email = $1', [email]);
+            if (user.rows.length === 0) {
+                const data = { message: 'Invalid Creadential', title: "Warning", icon: "danger" };
+                return res.status(400).json(data);
+            }
+
+            const validPassword = await bcrypt.compare(password, user.rows[0].password);
+            if (!validPassword) {
+                const data = { message: 'Invalid Creadential', title: "Warning", icon: "danger" };
+                return res.status(400).json(data);
+            }
+
+            // if (!validator.isEmail(email)) {
+            //     const data = { message: 'Please enter valid email', title: "Alert", icon: "danger" };
+            //     return res.status(400).json(data);
+            // }
+
+
+            // Generate OTP (random 6-digit number)
+            const otp = Math.floor(100000 + Math.random() * 900000);
+
+            const client = await pool.poolUser.connect();
+
+            // Delete the existing OTP for the email
+            await client.query(`DELETE FROM emailotp WHERE email = $1`, [email]);
+
+            // Insert the new OTP for the email
+            await client.query(`INSERT INTO emailotp (email, otp) VALUES ($1, $2)`, [email, otp]);
+            client.release();
+
+
+
+            // Send OTP via email
+            await transporter.sendMail({
+                from: process.env.email,
+                to: req.body.email,
+                subject: 'OTP for Registration AGISE',
+                text: `${otp} : is Your OTP for Login ASSAM GIS EXPLORER . ASSAM STATE SPACE APPLICATION CENTER`
+            });
+
+            const data = { message: 'OTP sent successfully', title: "Sent", icon: "success" };
+            return res.status(400).json(data);
+
+
+
+        } catch (err) {
+            console.error('Error in sending OTP via email:', err);
+            const error = { message: 'something went wrong' };
+
+            const data = { message: 'something went wrong, Try again!', title: "Error", icon: "danger" };
+            return res.status(400).json(data);
+        }
+    }
+
+    if (action === "login") {
+
+        try {
+            console.log("clicked login")
+
+
+            const client = await pool.poolUser.connect();
+
+
+            const user = await client.query('SELECT * FROM registered WHERE email = $1', [email]);
+            console.log('user')
+            console.log("1")
+
+            if (user.rows.length === 0) {
+                console.log('Invalid Creadential 1')
+                return res.status(400).json({ error: 'Invalid Creadential' });
+            }
+            console.log("2")
+
+            const validPassword = await bcrypt.compare(password, user.rows[0].password);
+            if (!validPassword) {
+                console.log('Invalid Creadential 2')
+
+                return res.status(400).json({ error: 'Invalid Creadential' });
+            }
+            console.log("3")
+
+
+            const validOtp = await client.query('SELECT * FROM emailotp WHERE email = $1', [email]);
+            const result = await client.query(`SELECT otp FROM emailotp WHERE email = $1`, [email]);
+            // console.log(result.rows);
+            // console.log(result.rows[0]);
+            // console.log();
+            const dbotp = result.rows[0].otp;
+            const storedOtp = dbotp.toString();
+
+            client.release();
+
+            console.log(storedOtp)
+            console.log(otp)
+
+
+            if (storedOtp != otp) {
+                console.log('Invalid Otp')
+
+                return res.status(400).json({ error: 'Invalid Otp' });
+            }
+            console.log("4")
+
+            const token = await jwt.sign({ email: user.rows[0].email }, process.env.secretKey, { expiresIn: '1h' });
+
+            console.log("token")
+
+
+            // res.cookie('token', token, { httpOnly: true }).json({ message: 'Login successful' });
+
+            res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
+            console.log("Login successful")
+            return res.json({ message: 'Login successful', token });
+
+
+        //    .json({ message: 'Login successful' });
+        //    return res.json({ token });
+        } catch (error) {
+
+            console.log(error)
+
+        }
+
+
+    }
+
+
 
 });
+
+
+router.post('/logout', (req, res) => {
+    res.clearCookie('token').json({ message: 'Logout successful' });
+});
+
+router.post('/secret', userAuthMiddleware, (req, res) => {
+
+    res.render("catalogView")
+
+});
+
+
+
 
 router.get('/forgot', (req, res) => {
     // Your OpenLayers logic here
