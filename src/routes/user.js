@@ -16,6 +16,11 @@ var passwordValidator = require('password-validator');
 // Create a schema
 var schema = new passwordValidator();
 
+
+const cookieParser = require('cookie-parser');
+const { log } = require('console');
+router.use(cookieParser());
+
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
 
@@ -351,7 +356,7 @@ router.get('/login', (req, res) => {
 });
 
 
-router.post('/login', upload.single('id_proof'), async(req, res) => {
+router.post('/login', upload.single('id_proof'), async (req, res) => {
 
     const {
 
@@ -429,32 +434,53 @@ router.post('/login', upload.single('id_proof'), async(req, res) => {
     if (action === "login") {
 
         try {
+            // const password = req.body.password
+
             console.log("clicked login")
+            console.log(req.body)
+
+
+            if (!email || !password || !otp) {
+                const data = { message: 'All fields are required', title: "Warning", icon: "warning" };
+                // return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                return res.json(data)
+            }
+        
+
+
 
 
             const client = await pool.poolUser.connect();
 
 
             const user = await client.query('SELECT * FROM registered WHERE email = $1', [email]);
+            console.log("db pw")
+            console.log(user.rows[0].password)
+
             console.log('user')
-            console.log("1")
+            console.log()
 
             if (user.rows.length === 0) {
                 console.log('Invalid Creadential 1')
-                return res.status(400).json({ error: 'Invalid Creadential' });
+                // return res.status(400).json({ error: 'Invalid Creadential' });
+                const data = { message: 'Invalid Creadential', title: "Warning", icon: "danger" };
+                return res.status(400).json(data);
             }
             console.log("2")
+            console.log(bcrypt.hashSync(req.body.password, 10))
+            console.log(user.rows[0].password)
 
             const validPassword = await bcrypt.compare(password, user.rows[0].password);
             if (!validPassword) {
                 console.log('Invalid Creadential 2')
+                const data = { message: 'Invalid Creadential', title: "Warning", icon: "danger" };
+                return res.status(400).json(data);
 
-                return res.status(400).json({ error: 'Invalid Creadential' });
             }
             console.log("3")
 
 
-            const validOtp = await client.query('SELECT * FROM emailotp WHERE email = $1', [email]);
+            const validOtp = await client.query(`SELECT * FROM emailotp WHERE email = $1`, [email]);
             const result = await client.query(`SELECT otp FROM emailotp WHERE email = $1`, [email]);
             // console.log(result.rows);
             // console.log(result.rows[0]);
@@ -483,12 +509,16 @@ router.post('/login', upload.single('id_proof'), async(req, res) => {
             // res.cookie('token', token, { httpOnly: true }).json({ message: 'Login successful' });
 
             res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
-            console.log("Login successful")
-            return res.json({ message: 'Login successful', token });
+            // console.log("Login successful")
+            // return res.json({ message: 'Login successful', token });
+            const data = { message: 'Login successful', title: "Sent", icon: "success" };
+            return res.status(400).json(data);
 
 
-        //    .json({ message: 'Login successful' });
-        //    return res.json({ token });
+            //    .json({ message: 'Login successful' });
+            //    return res.json({ token });
+            //    .json({ message: 'Login successful' });
+            //    return res.json({ token });
         } catch (error) {
 
             console.log(error)
@@ -521,10 +551,179 @@ router.get('/forgot', (req, res) => {
     res.render("userForgot");
 
 });
-router.post('/forgot', (req, res) => {
-    // Your OpenLayers logic here
-    // res.render("query");
 
+
+
+
+router.post('/forgot', upload.single('id_proof'), async (req, res) => {
+
+    const action = req.body.submit;
+    console.log("jijijijij")
+
+    console.log(req.body)
+
+   
+    if (action === "GetOTP") {
+        console.log("click getopt")
+        // Handle action 1
+        const email = req.body.email;
+
+        try {
+            const {
+
+                email,
+                password
+
+            } = req.body;
+            const client = await pool.poolUser.connect();
+            const user = await client.query('SELECT * FROM registered WHERE email = $1', [email]);
+            if (user.rows.length === 0) {
+                const data = { message: 'Invalid Creadential email', title: "Warning", icon: "danger" };
+                return res.status(400).json(data);
+            }
+
+ 
+
+      
+            // Generate OTP (random 6-digit number)
+            const otp = Math.floor(100000 + Math.random() * 900000);
+
+
+            // Delete the existing OTP for the email
+            await client.query(`DELETE FROM emailotp WHERE email = $1`, [email]);
+
+            // Insert the new OTP for the email
+            await client.query(`INSERT INTO emailotp (email, otp) VALUES ($1, $2)`, [email, otp]);
+            client.release();
+
+
+
+            // Send OTP via email
+            await transporter.sendMail({
+                from: process.env.email,
+                to: req.body.email,
+                subject: 'OTP for Registration AGISE',
+                text: `${otp} : is Your OTP for Login ASSAM GIS EXPLORER . ASSAM STATE SPACE APPLICATION CENTER`
+            });
+
+            const data = { message: 'OTP sent successfully', title: "Sent", icon: "success" };
+            return res.status(400).json(data);
+
+
+
+        } catch (err) {
+            console.error('Error in sending OTP via email:', err);
+            const error = { message: 'something went wrong' };
+
+            const data = { message: 'something went wrong, Try again!', title: "Error", icon: "danger" };
+            return res.status(400).json(data);
+        }
+    }
+
+    else if (action === 'update') {
+        console.log("click Register")
+
+        console.log(req.body)
+
+        try {
+
+            const {
+
+                email,
+                otp,
+                password
+            } = req.body;
+
+            if (!email || !password || !otp) {
+                const data = { message: 'All fields are required', title: "Warning", icon: "warning" };
+                // return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
+                return res.json(data)
+            }
+
+            const client = await pool.poolUser.connect();
+            const otpresult = await client.query(`SELECT otp FROM emailotp WHERE email = $1`, [email]);
+
+            if (otpresult.rows == 0) {
+                const data = { message: 'Verify OTP first', title: "Alert", icon: "danger" };
+                return res.status(400).json(data);
+            }
+            const dbotp = otpresult.rows[0].otp;
+            const storedOtp = dbotp.toString();
+            const clientotp = req.body.otp;
+
+            if (clientotp != storedOtp) {
+                const data = { message: 'Verify OTP first', title: "Alert", icon: "danger" };
+                return res.status(400).json(data);
+            }
+
+
+            const regresult = await client.query(`SELECT * FROM registered WHERE email = $1`, [email]);
+            console.log(`-->${regresult.rows == 0}`)
+            // const regemail = regresult.rows[0].email;
+            if (regresult.rows === 0) {
+                const data = { message: 'Record not found!', title: "Alert", icon: "warning" };
+                return res.status(400).json(data);
+
+            }
+            // Add properties to it
+            schema
+                .is().min(8)                                    // Minimum length 8
+                .is().max(100)                                  // Maximum length 100
+                .has().uppercase()                              // Must have uppercase letters
+                .has().lowercase()                              // Must have lowercase letters
+                .has().digits(2)                                // Must have at least 2 digits
+                .has().not().spaces()                           // Should not have spaces
+                .has().symbols()                                // Must have at least one special character
+
+            // Validate password function
+            const validatePassword = (password) => {
+                return schema.validate(password, { details: true });
+            };
+            const re_password = req.body.re_password;
+
+            if (password != re_password) {
+                const data = { message: 'Password Mismatch', title: "Alert", icon: "warning" };
+                return res.status(400).json(data);
+            }
+            if (validatePassword(password).length != 0) {
+                const data = { message: 'Minimum length 8 || Must have uppercase letters || Must have lowercase letters || Must have at least 2 digits || Should not have spaces || Must have at least one special character', title: "Password criteria", icon: "warning" };
+                return res.status(400).json(data);
+            }
+
+            // Insert data into PostgreSQL database
+           
+
+            const update = `
+            UPDATE registered SET password = $1 WHERE email = $2;
+                 `;
+
+
+            const hash_pw = bcrypt.hashSync(req.body.password, 10);
+            const values = [
+                hash_pw,
+                email
+            ];
+
+
+          
+            const dd = await client.query(update, values);
+            console.log(dd)
+            client.release();
+
+            const data = { message: 'Password Updated Successfully', title: "Updated", icon: "success" };
+            return res.status(400).json(data);
+
+        } catch (error) {
+            const data = { message: 'Something Went Wrong! try again', title: "Wrong", icon: "danger" };
+            console.error('Error inserting data:', error);
+            return res.status(400).json(data);
+
+        }
+        
+    }
+
+
+  
 });
 
 
