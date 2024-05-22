@@ -36,7 +36,7 @@ const transporter = nodemailer.createTransport({
 
 
 
-router.get('/', (req, res) => {
+router.get('/', async(req, res) => {
     res.render("userRegister");
 
 });
@@ -510,7 +510,11 @@ router.post('/login', upload.single('id_proof'), async (req, res) => {
             // console.log("Login successful")
             // return res.json({ message: 'Login successful', token });
             const data = { message: 'Login successful', title: "Sent", icon: "success" };
-            return res.status(400).json(data);
+            res.status(200).json(data);
+
+            // Redirect to another route (e.g., the homepage)
+            res.redirect('/');
+
 
 
             //    .json({ message: 'Login successful' });

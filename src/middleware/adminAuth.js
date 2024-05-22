@@ -16,14 +16,16 @@ const adminAuthMiddleware = (req, res, next) => {
 
   console.log(token)
 
-  if (!token) {
+  if (!token || token === undefined) {
     // return res.status(401).send({ error: '' });
-    const data = { message: 'Access denied', title: "Error", icon: "danger" };
-        return res.status(401).json(data);
+    const data = { message: 'Access denied 7', title: "Error", icon: "danger" };
+        // return res.status(401).json(data);
+        console.log("loggin mid")
+        return res.redirect('/login');
   }
 
   try {
-    const decoded = jwt.verify(token, process.env.secretKey);
+    const decoded = jwt.verify(token, process.env.adminSecretKey);
     req.user = decoded;
     next();
   } catch (err) {

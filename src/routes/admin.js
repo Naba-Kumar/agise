@@ -12,6 +12,7 @@ const jwt = require('jsonwebtoken');
 
 const cookieParser = require('cookie-parser');
 const { log } = require('console');
+const { Redirect } = require('twilio/lib/twiml/VoiceResponse');
 router.use(cookieParser());
 
 router.use(bodyParser.json());
@@ -37,13 +38,13 @@ router.get('/', (req, res) => {
 
 });
 
-router.get('/home',adminAuthMiddleware, (req, res) => {
+router.get('/home', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     res.render("adminHome");
 
 });
 
-router.post('/', upload.single('id_proof'),async(req, res) => {
+router.post('/', upload.single('id_proof'), async (req, res) => {
     // Your OpenLayers logic here
     const {
         admin_id,
@@ -60,14 +61,10 @@ router.post('/', upload.single('id_proof'),async(req, res) => {
 
         if (!admin_id || !password) {
             const data = { message: 'All fields are required', title: "Warning", icon: "warning" };
-            // return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
             return res.json(data)
         }
         const client = await pool.poolUser.connect();
-
-        console.log("db pw")
         const admin = await client.query('SELECT * FROM admins WHERE admin_id = $1', [admin_id]);
-        console.log(admin.rows.length === 0)
 
         if (admin.rows.length === 0) {
             console.log('Invalid Creadential 1')
@@ -75,24 +72,22 @@ router.post('/', upload.single('id_proof'),async(req, res) => {
             const data = { message: 'Invalid Creadential', title: "Warning", icon: "danger" };
             return res.status(400).json(data);
         }
-        console.log("2")
-
-        if (password === admin.rows[0].password) {
+       
+        if (password != admin.rows[0].password) {
             console.log('Invalid Creadential 2')
             const data = { message: 'Invalid Creadential', title: "Warning", icon: "danger" };
             return res.status(400).json(data);
 
         }
 
-        const token = await jwt.sign({ admin_id: user.rows[0].admin_id }, process.env.secretKey, { expiresIn: '1h' });
+        const token = await jwt.sign({ admin_id: admin.rows[0].admin_id }, process.env.secretKey, { expiresIn: '1h' });
 
         console.log("token")
 
         res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
 
-        const data = { message: 'Login successful', title: "Sent", icon: "success" };
+        const data = { message: 'Login successful', title: "Sent", icon: "success", redirect:'\\admin\\home' };
         return res.status(400).json(data);
-
     } catch (error) {
 
         console.log(error)
@@ -100,14 +95,30 @@ router.post('/', upload.single('id_proof'),async(req, res) => {
 
 });
 
-router.post('/home',adminAuthMiddleware, (req, res) => {
+router.post('/home', adminAuthMiddleware, (req, res) => {
     res.render("adminHome");
 
 });
 
 router.post('/logout', (req, res) => {
-    res.render("home");
+    // res.clearCookie('token');
+    // const data = { message: 'Logot successful', title: "Logout", icon: "success", redirect:'\\admin\\home' };
+    //     return res.status(400).json(data);
 
+    try {
+        // Clear the cookie containing the token
+        res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
+        
+        // Send a success response
+        const data = { message: 'Logout successful', title: "Logged Out", icon: "success", redirect: '\\' };
+        console.log(data)
+        return res.json(data);
+    } catch (error) {
+        console.error(error);
+        const data = { message: 'Logout failed', title: "Error", icon: "error" };
+
+        return res.status(500).json(data);
+    }
 });
 
 router.get('/requests', (req, res) => {

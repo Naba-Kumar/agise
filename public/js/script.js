@@ -1,3 +1,6 @@
+
+// 1st fetch api
+
 function formDataToObject(formData) {
     const obj = {};
     formData.forEach((value, key) => {
@@ -7,7 +10,7 @@ function formDataToObject(formData) {
 }
 
 // Generic function to handle form submissions
-function handleFormSubmit(event, url) {
+const handleFormSubmit = async(event, url)=> {
     event.preventDefault(); // Prevent the default form submission
 
     const formData = new FormData(event.target); // Create a FormData object from the form
@@ -17,9 +20,10 @@ function handleFormSubmit(event, url) {
     const formDataObj = formDataToObject(formData); // Convert FormData to an object for logging
     console.log('Submitting to URL:', url, 'with data:', formDataObj);
 
-    fetch(url, {
+    await fetch(url, {
         method: 'POST',
-        body: formData
+        redirect: 'follow',
+        body: formData,
     })
     .then(response => response.json())
 
@@ -29,8 +33,20 @@ function handleFormSubmit(event, url) {
             Swal.fire({
                 title: data.title,
                 text: data.message,
+                confirmButtonText: "OK",
+
                 icon: data.icon
-            });
+            }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        if(data.redirect != undefined){
+                            window.location.href = data.redirect; // Replace with your desired URL
+                        }
+                    } 
+                  });
+
+         
+            
         } else {
             console.error('Unexpected response format:', data);
             Swal.fire({
@@ -78,11 +94,47 @@ document.addEventListener('DOMContentLoaded', function() {
             handleFormSubmit(e, '/admin');
         });
     }
+  
 });
 
+// 2nd fetch api
+
+function handleAdminLogout (event, url) {
+    event.preventDefault(); // Prevent the default form submission
 
 
+    fetch(url, { // Send the FormData object to the specified route
+        method: 'POST',
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data) {
+            Swal.fire({
+                title: data.title,
+                text: data.message,
+                confirmButtonText: "OK",
 
+                icon: data.icon
+            }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        if(data.redirect != undefined){
+                            window.location.href = data.redirect; // Replace with your desired URL
+                        }
+                    } 
+                  });
+        } // Handle the response data
+    })
+    .catch(error => {
+        console.error('Error:', error); // Handle any errors
+    });
+}
+
+// Attach event listeners to each form, passing the appropriate endpoint URL
+document.getElementById('adminLogout').addEventListener('click', function(e) {
+    handleAdminLogout (e, '/admin/logout');
+});
 
 
 
