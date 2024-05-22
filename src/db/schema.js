@@ -18,11 +18,9 @@ async function createTables() {
         id_proof BYTEA NOT NULL
       );
 
-      CREATE TABLE IF NOT EXISTS admin (
-        admin_id SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
-        designation VARCHAR(255) NOT NULL,
-        ip VARCHAR(40) NOT NULL,
+      CREATE TABLE IF NOT EXISTS admins (
+        sn SERIAL PRIMARY KEY,
+        admin_id VARCHAR(10) NOT NULL,
         password VARCHAR(255) NOT NULL
       );
 

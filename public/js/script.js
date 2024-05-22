@@ -1,42 +1,3 @@
-// const sidebarToggle = document.querySelector("#sidebar-toggle");
-// sidebarToggle.addEventListener("click", function () {
-//     document.querySelector("#sidebar").classList.toggle("collapsed");
-// });
-
-// document.querySelector(".theme-toggle").addEventListener("click", () => {
-//     toggleLocalStorage();
-//     toggleRootClass();
-// });
-
-// function toggleRootClass() {
-//     const current = document.documentElement.getAttribute('data-bs-theme');
-//     const inverted = current == 'dark' ? 'light' : 'dark';
-//     document.documentElement.setAttribute('data-bs-theme', inverted);
-// }
-
-
-console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhuuuuuuuuuuuuuuuuuuuuuop");
-// function toggleLocalStorage() {
-//     if (isLight()) {
-//         localStorage.removeItem("light");
-//     } else {
-//         localStorage.setItem("light", "set");
-//     }
-// }
-
-// function isLight() {
-//     return localStorage.getItem("light");
-// }
-
-// if (isLight()) {
-//     toggleRootClass();
-// }
-
-
-
-
-    // Generic function to handle form submissions
-// Function to convert FormData to an object for better logging
 function formDataToObject(formData) {
     const obj = {};
     formData.forEach((value, key) => {
@@ -111,6 +72,12 @@ document.addEventListener('DOMContentLoaded', function() {
             handleFormSubmit(e, '/user');
         });
     }
+    const adminLoginForm = document.getElementById('adminLoginForm');
+    if (adminLoginForm) {
+        adminLoginForm.addEventListener('submit', function(e) {
+            handleFormSubmit(e, '/admin');
+        });
+    }
 });
 
 
@@ -119,3 +86,43 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 
+
+    // const sidebarToggle = document.querySelector("#sidebar-toggle");
+    // sidebarToggle.addEventListener("click", function () {
+    //     document.querySelector("#sidebar").classList.toggle("collapsed");
+    // });
+    
+    // document.querySelector(".theme-toggle").addEventListener("click", () => {
+    //     toggleLocalStorage();
+    //     toggleRootClass();
+    // });
+    
+    // function toggleRootClass() {
+    //     const current = document.documentElement.getAttribute('data-bs-theme');
+    //     const inverted = current == 'dark' ? 'light' : 'dark';
+    //     document.documentElement.setAttribute('data-bs-theme', inverted);
+    // }
+    
+    
+    console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhuuuuuuuuuuuuuuuuuuuuuop");
+    // function toggleLocalStorage() {
+    //     if (isLight()) {
+    //         localStorage.removeItem("light");
+    //     } else {
+    //         localStorage.setItem("light", "set");
+    //     }
+    // }
+    
+    // function isLight() {
+    //     return localStorage.getItem("light");
+    // }
+    
+    // if (isLight()) {
+    //     toggleRootClass();
+    // }
+    
+    
+    
+    
+        // Generic function to handle form submissions
+    // Function to convert FormData to an object for better logging

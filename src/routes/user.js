@@ -377,6 +377,7 @@ router.post('/login', upload.single('id_proof'), async (req, res) => {
         const email = req.body.email;
 
         try {
+            const client = await pool.poolUser.connect();
             const user = await client.query('SELECT * FROM registered WHERE email = $1', [email]);
             if (user.rows.length === 0) {
                 const data = { message: 'Invalid Creadential', title: "Warning", icon: "danger" };
@@ -398,7 +399,6 @@ router.post('/login', upload.single('id_proof'), async (req, res) => {
             // Generate OTP (random 6-digit number)
             const otp = Math.floor(100000 + Math.random() * 900000);
 
-            const client = await pool.poolUser.connect();
 
             // Delete the existing OTP for the email
             await client.query(`DELETE FROM emailotp WHERE email = $1`, [email]);
@@ -455,10 +455,8 @@ router.post('/login', upload.single('id_proof'), async (req, res) => {
 
             const user = await client.query('SELECT * FROM registered WHERE email = $1', [email]);
             console.log("db pw")
-            console.log(user.rows[0].password)
 
             console.log('user')
-            console.log()
 
             if (user.rows.length === 0) {
                 console.log('Invalid Creadential 1')
@@ -578,7 +576,7 @@ router.post('/forgot', upload.single('id_proof'), async (req, res) => {
             const client = await pool.poolUser.connect();
             const user = await client.query('SELECT * FROM registered WHERE email = $1', [email]);
             if (user.rows.length === 0) {
-                const data = { message: 'Invalid Creadential email', title: "Warning", icon: "danger" };
+                const data = { message: 'Invalid User', title: "Warning", icon: "danger" };
                 return res.status(400).json(data);
             }
 
