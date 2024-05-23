@@ -48,7 +48,8 @@ const adminAuthMiddleware = (req, res, next) => {
     next();
   } catch (err) {
     console.log(err)
-    res.status(400).send({ error: 'Invalid token' });
+    return res.redirect('/admin');
+    // res.status(400).send({ error: 'Invalid token' });
   }
 };
 

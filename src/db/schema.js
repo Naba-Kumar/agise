@@ -26,7 +26,8 @@ async function createTables() {
 
       CREATE TABLE IF NOT EXISTS queries (
         queryid SERIAL PRIMARY KEY,
-        name VARCHAR(255) NOT NULL,
+        full_name VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL,
         mobile VARCHAR(11) NOT NULL,
         occupation VARCHAR(100) NOT NULL,
         reason VARCHAR(255) NOT NULL,

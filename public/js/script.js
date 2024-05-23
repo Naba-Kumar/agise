@@ -1,4 +1,8 @@
 
+// const Swal = require('sweetalert2')
+
+
+
 // 1st fetch api
 
 function formDataToObject(formData) {
@@ -94,12 +98,13 @@ document.addEventListener('DOMContentLoaded', function() {
             handleFormSubmit(e, '/admin');
         });
     }
-    // const queryForm = document.getElementById('queryForm');
-    // if (queryForm) {
-    //     queryForm.addEventListener('submit', function(e) {
-    //         handleFormSubmit(e, '/');
-    //     });
-    // }
+    const queryForm = document.getElementById('queryForm');
+    if (queryForm) {
+        queryForm.addEventListener('submit', function(e) {
+            console.log("HII")
+            handleFormSubmit(e, '/query');
+        });
+    }
   
 });
 
@@ -142,6 +147,7 @@ function handleAdminLogout (event, url) {
 document.getElementById('adminLogout').addEventListener('click', function(e) {
     handleAdminLogout (e, '/admin/logout');
 });
+
 
 
 

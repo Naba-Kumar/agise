@@ -49,15 +49,14 @@ const upload = multer({ storage: storage });
 
 router.post('/query', upload.single('id_proof'), async (req, res) => {
 
-    const actions = "Register"
 
-    const action = req.body.submit;
-    const data = req.body.data;
+    // const action = req.body.submit;
+    // const data = req.body.data;
 
     console.log(req.body)
 
     const {
-        fullname,
+        full_name,
         email,
         mobile,
         organization,
@@ -73,7 +72,7 @@ router.post('/query', upload.single('id_proof'), async (req, res) => {
 
 
 
-        if (!fullname || !mobile || !organization || !occupation || !designation || !email || !reason || !message) {
+        if (!full_name || !email || !mobile || !occupation || !reason || !message ) {
             const data = { message: 'All fields are required', title: "Warning", icon: "warning" };
             // return res.status(400).send('<script>alert("' + data.message + '");window.location.href = window.location.href;</script>');
             return res.json(data)
@@ -90,34 +89,26 @@ router.post('/query', upload.single('id_proof'), async (req, res) => {
             return res.json(data)
         }
 
+        const isresolved = false;
+
         const client = await pool.poolUser.connect();
 
 
-        // Validate password function
 
+        
 
-        console.log(req.file.path)
-        // Insert data into PostgreSQL database
-        fullname,
-            email,
-            mobile,
-            organization,
-            occupation,
-            reason,
-            message
         const query = `
-        INSERT INTO queries ( first_name, email, mobile, mobile, occupation, reason, message)
+        INSERT INTO queries ( full_name, email, mobile, occupation, reason, message, isresolved)
         VALUES ($1, $2, $3, $4, $5, $6, $7)
             `;
-        const hash_pw = bcrypt.hashSync(req.body.password, 10);
         const values = [
-            fullname,
+            full_name,
             email,
             mobile,
-            organization,
             occupation,
             reason,
-            message
+            message,
+            isresolved
         ];
 
 
@@ -127,7 +118,7 @@ router.post('/query', upload.single('id_proof'), async (req, res) => {
         await client.query(query, values);
         client.release();
 
-        const data = { message: 'You Are Registered Successfully', title: "Registered", icon: "success" };
+        const data = { message: 'Query submitted  Successfully', title: "Submitted", icon: "success", redirect: '\\' };
         return res.status(400).json(data);
 
     } catch (error) {
@@ -141,5 +132,12 @@ router.post('/query', upload.single('id_proof'), async (req, res) => {
 
 
 });
+
+// router.get('*', (req, res) => {
+//     // Your OpenLayers logic here
+//     // res.render("adminQueries");
+//     res.render("404")
+
+// });
 
 module.exports = router;

@@ -72,7 +72,7 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
             const data = { message: 'Invalid Creadential', title: "Warning", icon: "danger" };
             return res.status(400).json(data);
         }
-       
+
         if (password != admin.rows[0].password) {
             console.log('Invalid Creadential 2')
             const data = { message: 'Invalid Creadential', title: "Warning", icon: "danger" };
@@ -86,7 +86,7 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
 
         res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
 
-        const data = { message: 'Login successful', title: "Sent", icon: "success", redirect:'\\admin\\home' };
+        const data = { message: 'Login successful', title: "Sent", icon: "success", redirect: '\\admin\\home' };
         return res.status(400).json(data);
     } catch (error) {
 
@@ -100,66 +100,46 @@ router.post('/home', adminAuthMiddleware, (req, res) => {
 
 });
 
-router.post('/logout', (req, res) => {
-    // res.clearCookie('token');
-    // const data = { message: 'Logot successful', title: "Logout", icon: "success", redirect:'\\admin\\home' };
-    //     return res.status(400).json(data);
 
-    try {
-        // Clear the cookie containing the token
-        res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
-        
-        // Send a success response
-        const data = { message: 'Logout successful', title: "Logged Out", icon: "success", redirect: '\\' };
-        console.log(data)
-        return res.json(data);
-    } catch (error) {
-        console.error(error);
-        const data = { message: 'Logout failed', title: "Error", icon: "error" };
-
-        return res.status(500).json(data);
-    }
-});
-
-router.get('/requests', (req, res) => {
+router.get('/requests', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     res.render("adminFileRequests");
 
 });
-router.post('/requests', (req, res) => {
+router.post('/requests', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     // res.render("adminRequests");
 
 });
 
-router.get('/upload', (req, res) => {
+router.get('/upload', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     res.render("adminUpload");
 
 });
-router.post('/upload', (req, res) => {
+router.post('/upload', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     // res.render("adminUpload");
 
 });
 
-router.get('/catalog', (req, res) => {
+router.get('/catalog', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     res.render("adminAddCatalog");
 
 });
 
-router.post('/catalog', (req, res) => {
+router.post('/catalog', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     // res.render("adminUpload");
 
 });
-router.post('/delete', (req, res) => {
+router.post('/delete', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     // res.render("adminDelete");
 
 });
-router.get('/delete', (req, res) => {
+router.get('/delete', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     res.render("adminFileDelete");
 
@@ -174,27 +154,47 @@ router.get('/delete', (req, res) => {
 // });
 
 
-router.get('/queries', (req, res) => {
+router.get('/queries', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     res.render("adminQueries");
 
 });
-router.post('/queries', (req, res) => {
+router.post('/queries', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     // res.render("adminQueries");
 
 });
+router.post('/logout', adminAuthMiddleware, (req, res) => {
+    // res.clearCookie('token');
+    // const data = { message: 'Logot successful', title: "Logout", icon: "success", redirect:'\\admin\\home' };
+    //     return res.status(400).json(data);
 
+    try {
+        // Clear the cookie containing the token
+        res.clearCookie('token', { httpOnly: true, secure: process.env.NODE_ENV === 'production' });
 
+        // Send a success response
+        const data = { message: 'Logout successful', title: "Logged Out", icon: "success", redirect: '\\' };
+        console.log(data)
+        return res.json(data);
+    } catch (error) {
+        console.error(error);
+        const data = { message: 'Logout failed', title: "Error", icon: "error" };
 
-
-
-
-router.post('/logout', (req, res) => {
-    // Your OpenLayers logic here
-    // res.render("adminUpload");
+        return res.status(500).json(data);
+    }
 
 });
+
+
+router.get('*', (req, res) => {
+    // Your OpenLayers logic here
+    // res.render("adminQueries");
+    res.render("404")
+
+});
+
+
 
 
 module.exports = router;

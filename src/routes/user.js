@@ -37,12 +37,28 @@ const transporter = nodemailer.createTransport({
 
 
 router.get('/', async(req, res) => {
-    res.render("userRegister");
-
+    res.render("userRegister",{
+        pageTitle:"Register"
+    });
+    
 });
 
 
+router.get('/login', (req, res) => {
+    // Your OpenLayers logic here
+    res.render("userLogin",{
+        pageTitle:"Login"
+    });
+    
+});
 
+router.get('/forgot', (req, res) => {
+    // Your OpenLayers logic here
+    res.render("userForgot",{
+        pageTitle:"Update Password"
+    });
+
+});
 // ------Register route starts
 // const storage = multer.memoryStorage(); // Store files in memory
 
@@ -349,11 +365,6 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
 
 
 
-router.get('/login', (req, res) => {
-    // Your OpenLayers logic here
-    res.render("userLogin");
-
-});
 
 
 router.post('/login', upload.single('id_proof'), async (req, res) => {
@@ -548,11 +559,6 @@ router.post('/secret', userAuthMiddleware, (req, res) => {
 
 
 
-router.get('/forgot', (req, res) => {
-    // Your OpenLayers logic here
-    res.render("userForgot");
-
-});
 
 
 
@@ -726,6 +732,13 @@ router.post('/forgot', upload.single('id_proof'), async (req, res) => {
 
 
   
+});
+
+router.get('*', (req, res) => {
+    // Your OpenLayers logic here
+    // res.render("adminQueries");
+    res.render("404")
+
 });
 
 

@@ -18,4 +18,11 @@ router.get('/view', (req, res) => {
     res.render("view");
 
 });
+
+router.get('*', (req, res) => {
+    // Your OpenLayers logic here
+    // res.render("adminQueries");
+    res.render("404")
+
+});
 module.exports = router;

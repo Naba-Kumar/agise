@@ -1,11 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        {{>head}}
-  
 
-    </head>
-<body>
+<head>
+    {{>head}}
+
+
+</head>
+
+<body onload="loaderFunc()">
+    <div id="loader">
+        <div id="loaderelement">
+            <div class="spinner-grow text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-secondary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-success" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-danger" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-warning" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-info" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-primary" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+            <div class="spinner-grow text-dark" role="status">
+                <span class="sr-only">Loading...</span>
+            </div>
+        </div>
+    </div>
 
     {{>homeNav}}
 
@@ -258,8 +288,8 @@
                 </div>
                 <div class="col-lg-6 pe-lg-0 wow fadeIn" data-wow-delay="0.5s" style="min-height: 400px;">
                     <div class="position-relative h-100">
-                        <img class="position-absolute img-fluid w-100 h-100" src="./image/mapp.jpg" style="object-fit: cover;"
-                            alt="">
+                        <img class="position-absolute img-fluid w-100 h-100" src="./image/mapp.jpg"
+                            style="object-fit: cover;" alt="">
                     </div>
                 </div>
             </div>
@@ -303,16 +333,16 @@
                         <form id="queryForm" action="/query" method="POST" enctype="multipart/form-data">
                             <div class="row g-3">
                                 <div class="col-12 col-sm-6">
-                                    <input type="text" class="form-control border-0" placeholder="Your Name" name="fullname" 
-                                        style="height: 55px;">
+                                    <input type="text" class="form-control border-0" placeholder="Your Name"
+                                        name="full_name" style="height: 55px;">
                                 </div>
                                 <div class="col-12 col-sm-6">
-                                    <input type="email" class="form-control border-0" placeholder="Your Email" name="email" 
-                                        style="height: 55px;">
+                                    <input type="email" class="form-control border-0" placeholder="Your Email"
+                                        name="email" style="height: 55px;">
                                 </div>
                                 <div class="col-12 col-sm-6">
-                                    <input type="text" class="form-control border-0" placeholder="Your Mobile" name="mobile" 
-                                        style="height: 55px;">
+                                    <input type="text" class="form-control border-0" placeholder="Your Mobile"
+                                        name="mobile" style="height: 55px;">
                                 </div>
                                 <div class="col-12 col-sm-6">
                                     <select class="form-select border-0" style="height: 55px;" name="occupation">
@@ -326,15 +356,17 @@
 
                                 <div class="col-12 ">
 
-                                    <textarea class="form-control border-0" placeholder="Reason For Contact" name="reason"></textarea>
+                                    <textarea class="form-control border-0" placeholder="Reason For Contact"
+                                        name="reason"></textarea>
 
                                 </div>
                                 <div class="col-12">
-                                    <textarea class="form-control border-0" rows="5"
-                                        placeholder="Describe your Message" name="message"></textarea>
+                                    <textarea class="form-control border-0" rows="5" placeholder="Describe your Message"
+                                        name="message"></textarea>
                                 </div>
                                 <div class="col-12">
-                                    <button class="btn btn-primary w-100 py-3" type="submit" value="send">Drop Message</button>
+                                    <button class="btn btn-primary w-100 py-3" type="submit" value="send">Drop
+                                        Message</button>
                                 </div>
                             </div>
                         </form>
@@ -347,8 +379,20 @@
 
     {{>homeFooter}}
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script src="script.js"></script>
+    <script>
+        const loader = document.getElementById('loader');
+        function loaderFunc() {
+            console.log("loaded")
+            console.log(loader)
+            console.log("loaded")
+
+            loader.style.display = 'none'; 
+
+
+        }
+    </script>
 </body>
 
 </html>
