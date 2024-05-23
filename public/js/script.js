@@ -94,6 +94,12 @@ document.addEventListener('DOMContentLoaded', function() {
             handleFormSubmit(e, '/admin');
         });
     }
+    // const queryForm = document.getElementById('queryForm');
+    // if (queryForm) {
+    //     queryForm.addEventListener('submit', function(e) {
+    //         handleFormSubmit(e, '/');
+    //     });
+    // }
   
 });
 
@@ -131,6 +137,7 @@ function handleAdminLogout (event, url) {
     });
 }
 
+// 
 // Attach event listeners to each form, passing the appropriate endpoint URL
 document.getElementById('adminLogout').addEventListener('click', function(e) {
     handleAdminLogout (e, '/admin/logout');

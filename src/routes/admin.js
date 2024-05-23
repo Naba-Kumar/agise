@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const pool = require('../db/connection');
 const multer = require('multer');
 const path = require('path');
-const adminAuthMiddleware = require("../middleware/userAuth")
+const adminAuthMiddleware = require("../middleware/adminAuth")
 const jwt = require('jsonwebtoken');
 
 
@@ -80,7 +80,7 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
 
         }
 
-        const token = await jwt.sign({ admin_id: admin.rows[0].admin_id }, process.env.secretKey, { expiresIn: '1h' });
+        const token = await jwt.sign({ admin_id: admin.rows[0].admin_id }, process.env.adminSecretKey, { expiresIn: '1h' });
 
         console.log("token")
 

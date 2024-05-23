@@ -2,26 +2,44 @@
 
 const jwt = require('jsonwebtoken');
 const express = require('express');
+const bodyParser = require('body-parser');
+
 const app = express();
 
 const cookieParser = require('cookie-parser');
 app.use(cookieParser());
 
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+
 require('dotenv').config();
 
 const adminAuthMiddleware = (req, res, next) => {
   const token = req.cookies.token;
-  console.log("token")
+  console.log("Checking token presence...");
 
-  console.log(token)
+  function parseJwt(token) {
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+      return null;
+    }
+  }
 
-  if (!token || token === undefined) {
-    // return res.status(401).send({ error: '' });
-    const data = { message: 'Access denied 7', title: "Error", icon: "danger" };
-        // return res.status(401).json(data);
-        console.log("loggin mid")
-        return res.redirect('/login');
+
+
+  const decodedToken = parseJwt(token);
+  const currentTime = Math.floor(Date.now() / 1000);
+
+
+  if (!token) {
+    console.log("Token not found. Redirecting to login.");
+    return res.redirect('/admin');
+  }
+
+  if (decodedToken.exp < currentTime) {
+    return res.redirect('/admin');
   }
 
   try {
@@ -29,6 +47,7 @@ const adminAuthMiddleware = (req, res, next) => {
     req.user = decoded;
     next();
   } catch (err) {
+    console.log(err)
     res.status(400).send({ error: 'Invalid token' });
   }
 };
