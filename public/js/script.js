@@ -105,6 +105,21 @@ document.addEventListener('DOMContentLoaded', function() {
             handleFormSubmit(e, '/query');
         });
     }
+
+    const adminUpload = document.getElementById('adminUploadForm');
+    if (adminUpload) {
+        adminUpload.addEventListener('submit', function(e) {
+            console.log("HII admin")
+            handleFormSubmit(e, '/admin/shpuploads');
+        });
+    }
+    const adminCatalogForm = document.getElementById('adminCatalogForm');
+    if (adminCatalogForm) {
+        adminCatalogForm.addEventListener('submit', function(e) {
+            console.log("HII ctalog")
+            handleFormSubmit(e, '/admin/catalog');
+        });
+    }
   
 });
 
@@ -141,12 +156,41 @@ function handleAdminLogout (event, url) {
         console.error('Error:', error); // Handle any errors
     });
 }
-
-// 
 // Attach event listeners to each form, passing the appropriate endpoint URL
 document.getElementById('adminLogout').addEventListener('click', function(e) {
     handleAdminLogout (e, '/admin/logout');
 });
+
+
+// ---------------------------------------
+
+document.addEventListener('DOMContentLoaded', () => {
+    const fileNameSelect = document.getElementById('file_name');
+    const fileIdInput = document.getElementById('file_id');
+
+    fileNameSelect.addEventListener('change', async () => {
+        const fileName = fileNameSelect.value;
+
+        if (fileName) {
+            try {
+                const response = await fetch(`/admin/catalog/${fileName}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    fileIdInput.value = data.file_id;
+                } else {
+                    console.error('File not found');
+                    fileIdInput.value = '';
+                }
+            } catch (error) {
+                console.error('Error fetching item details:', error);
+            }
+        } else {
+            fileIdInput.value = '';
+        }
+    });
+});
+
+  
 
 
 

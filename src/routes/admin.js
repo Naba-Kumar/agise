@@ -8,11 +8,13 @@ const multer = require('multer');
 const path = require('path');
 const adminAuthMiddleware = require("../middleware/adminAuth")
 const jwt = require('jsonwebtoken');
-
+const childProcess = require('child_process');
+const { exec } = childProcess;
+const AdmZip = require('adm-zip');
+const axios = require('axios');
 
 const cookieParser = require('cookie-parser');
 const { log } = require('console');
-const { Redirect } = require('twilio/lib/twiml/VoiceResponse');
 router.use(cookieParser());
 
 router.use(bodyParser.json());
@@ -20,16 +22,28 @@ router.use(bodyParser.urlencoded({ extended: true }));
 
 
 
-const storage = multer.diskStorage({
+const loginstorage = multer.diskStorage({
     destination: function (req, file, cb) {
-        cb(null, 'uploads/')
+        cb(null, 'logins/')
     },
     filename: function (req, file, cb) {
         cb(null, Date.now() + path.extname(file.originalname)) // Appending extension
     }
 });
 
-const upload = multer({ storage: storage });
+const login = multer({ storage: loginstorage });
+
+
+const shpupload = multer({
+    dest: 'shpuploads/',
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/zip' || file.mimetype === 'application/x-zip-compressed') {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only ZIP files are allowed.'));
+        }
+    }
+});;
 
 
 router.get('/', (req, res) => {
@@ -44,7 +58,7 @@ router.get('/home', adminAuthMiddleware, (req, res) => {
 
 });
 
-router.post('/', upload.single('id_proof'), async (req, res) => {
+router.post('/', login.single('id_proof'), async (req, res) => {
     // Your OpenLayers logic here
     const {
         admin_id,
@@ -65,7 +79,7 @@ router.post('/', upload.single('id_proof'), async (req, res) => {
         }
         const client = await pool.poolUser.connect();
         const admin = await client.query('SELECT * FROM admins WHERE admin_id = $1', [admin_id]);
-
+        client.release()
         if (admin.rows.length === 0) {
             console.log('Invalid Creadential 1')
             // return res.status(400).json({ error: 'Invalid Creadential' });
@@ -117,21 +131,277 @@ router.get('/upload', adminAuthMiddleware, (req, res) => {
     res.render("adminUpload");
 
 });
-router.post('/upload', adminAuthMiddleware, (req, res) => {
+
+router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), async (req, res) => {
     // Your OpenLayers logic here
-    // res.render("adminUpload");
+
+    console.log("jij")
+    try {
+        const { table_name, workspace, data_store, srid } = req.body;
+        const client = await pool.poolShp.connect();
+
+        const query = `
+                SELECT EXISTS (
+                    SELECT 1 
+                    FROM information_schema.tables 
+                    WHERE table_schema = 'public'
+                    AND table_name = $1
+                );
+            `;
+        const result = await client.query(query, [table_name]);
+        const checkTableExists = result.rows[0].exists;
+        client.release()
+
+        if (checkTableExists) {
+            const data = { message: 'Shapefile Name Already Exist', title: "Oops?", icon: "danger", redirect: '\\admin\\upload' };
+            return res.status(400).json(data);
+        }
+
+
+
+        console.log("hello from shpupld")
+        let zipfilePath = req.file.path;
+        const basedir = 'shpuploads/'
+        const zip = new AdmZip(req.file.path);
+
+        const fullDirectoryPath = path.join(basedir, table_name)
+
+        zip.extractAllTo(fullDirectoryPath, true);
+
+        const tmpshppath0 = fullDirectoryPath + '\\' + req.file.originalname;
+
+        const tmpshppath = path.normalize(tmpshppath0);
+        // Extract the file name without the extension
+        const shapefilePath = tmpshppath.replace(".zip", ".shp");
+        // Return the file name with the new extension
+
+        // process.env.PGPASSWORD = '306090';
+
+        const cmd = `shp2pgsql -I -s ${srid} ${shapefilePath} ${table_name} | psql -U ${process.env.db_user} -d ${process.env.shp_db}`;
+
+        console.log(cmd)
+
+        exec(cmd, { env: { ...process.env, PGPASSWORD: process.env.PGPASSWORD } }, async (error, stdout, stderr) => {
+            if (error) {
+                console.error(`exec error: ${error}`);
+                // return res.status(500).send('Error uploading shapefile.');
+                const data = { message: 'Something Were Wrong', title: "Oops?", icon: "danger", redirect: '\\admin\\upload' };
+                return res.status(400).json(data);
+            }
+            if (stderr) {
+                console.error(`stder/r: ${stderr}`);
+                // return res.status(500).send('Error uploading shapefile.');
+                // const data = { message: 'Something Were Wrong', title: "Oops?", icon: "danger", redirect: '\\admin\\upload' };
+                // return res.status(400).json(data);
+            }
+            if (stdout) {
+                // console.error(`stdout: ${stdout}`);
+                // return res.status(500).send('Error uploading shapefile.');
+            }
+
+            // If successful, send a success response
+            // res.send('Shapefile uploaded successfully.');
+            const is_added = false;
+            const query = `
+                 INSERT INTO shapefiles (file_name, is_added)
+                 VALUES ($1, $2)
+                `;
+
+            const values = [
+                table_name,
+                is_added
+            ];
+
+            try {
+                const client = await pool.poolUser.connect();
+
+                await client.query(query, values);
+                client.release();
+                console.log('Shapefile uploaded successfully');
+                const data = { message: 'Shapefile uploaded successfully', title: "uploaded", icon: "success", redirect: '\\admin\\upload' };
+                console.log(data)
+                return res.status(400).json(data);
+            } catch (dbError) {
+                console.error('Error executing database query:', dbError);
+                const data = { message: 'something went wrong ', title: "Oops?", icon: "danger" };
+                return res.status(400).json(data);
+                res.status(500).send('Error executing database query');
+            }
+
+
+            const data = { message: 'Shapefile uploaded successfully', title: "uploaded", icon: "success", redirect: '\\admin\\upload' };
+            console.log(data)
+            return res.status(400).json(data);
+
+            // Publish table to GeoServer
+            // const workspace = 'catalog';
+            // const dataStore = 'catalog';
+
+            const table_name1 = 'assam_natural'
+
+            console.log(req.body)
+            console.log(req.body)
+
+            axios.post(`http://localhost:8080/geoserver/rest/workspaces/${workspace}/datastores/${data_store}/featuretypes`, {
+                featureType: {
+                    name: table_name,
+                    nativeName: table_name,
+                    title: table_name,
+                    srs: 'EPSG:4326'
+                }
+            }, {
+                auth: {
+                    username: 'admin',
+                    password: 'geoserver'
+                }
+            }).then(async response => {
+                // res.send('Shapefile uploaded and published successfully');
+                console.log('--------------------------------------')
+
+                // console.log(`http://localhost:8080/geoserver/rest/workspaces/${workspace}/datastores/${dataStore}/featuretypes`)
+
+                const query = `
+                INSERT INTO shapefile_track ( file_name, workspace, dataStore, public)
+                VALUES ($1, $2, $3, $4)
+                    `;
+
+                const public = false;
+                const values = [
+                    table_name,
+                    workspace,
+                    data_store,
+                    public
+                ];
+
+                try {
+                    const client = await pool.poolUser.connect();
+
+                    await client.query(query, values);
+                    client.release();
+                    console.log('Shapefile uploaded and published successfully');
+                } catch (dbError) {
+                    console.error('Error executing database query:', dbError);
+                    res.status(500).send('Error executing database query');
+                }
+
+                console.log('Shapefile uploaded and published successfully')
+                const data = { message: 'Shapefile uploaded and pulished successfully', title: "uploaded", icon: "success", redirect: '\\admin\\upload' };
+                console.log(data)
+                return res.status(400).json(data);
+
+            }).catch(error => {
+                console.error('Error publishing to GeoServer:', error);
+                res.status(500).send('Error publishing to GeoServer');
+            });
+        })
+
+
+    } catch (error) {
+        console.error(`erryor: ${error}`)
+    }
 
 });
 
-router.get('/catalog', adminAuthMiddleware, (req, res) => {
-    // Your OpenLayers logic here
-    res.render("adminAddCatalog");
 
+// Route to get item details
+// Route to fetch item details based on file_name
+router.get('/catalog/:file_name', async (req, res) => {
+    try {
+        const { file_name } = req.params;
+        const client = await pool.poolUser.connect();
+        const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE file_name = $1', [file_name]);
+        client.release();
+        if (rows.length) {
+            res.json(rows[0]);
+        } else {
+            res.status(404).send('File not found');
+        }
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
 });
 
-router.post('/catalog', adminAuthMiddleware, (req, res) => {
-    // Your OpenLayers logic here
-    // res.render("adminUpload");
+// Route to render the form with file names
+router.get('/catalog', adminAuthMiddleware,  async (req, res) => {
+    try {
+        const client = await pool.poolUser.connect();
+        const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles');
+        client.release();
+        res.render('adminAddCatalog', { items: rows });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.post('/catalog', adminAuthMiddleware, login.single('id_proof'), async (req, res) => {
+
+    console.log(req.body)
+
+
+
+    const { file_name, file_id, workspace, store, title, description } = req.body;
+
+    try {
+        if (!file_name || !file_id || !workspace || !store || !title || !description) {
+            const data = { message: 'All fields are required', title: "Warning", icon: "warning" };
+            return res.json(data)
+        }
+
+
+        axios.post(`http://localhost:8080/geoserver/rest/workspaces/${workspace}/datastores/${store}/featuretypes`, {
+            featureType: {
+                name: file_name,
+                nativeName: file_name,
+                title: file_name,
+                srs: 'EPSG:4326'
+            }
+        }, {
+            auth: {
+                username: 'admin',
+                password: 'geoserver'
+            }
+        }).then(async response => {
+            // res.send('Shapefile uploaded and published successfully');
+            console.log('--------------------------------------')
+
+            const client = await pool.poolUser.connect();
+
+            const visibility = true;
+    
+            const query = `
+                INSERT INTO catalog( file_name, file_id, workspace, store, title, description, visibility)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    `;
+            const values = [
+                file_name,
+                file_id,
+                workspace,
+                store,
+                title,
+                description,
+                visibility
+            ];
+    
+            await client.query(query, values);
+            client.release();
+
+
+
+        }).catch(error => {
+            console.error('Error publishing to GeoServer:', error);
+            const data = { message: 'Error publishing to GeoServer', title: "Oops?", icon: "danger" };
+            console.log(data)
+            return res.status(500).json(data);
+        });
+
+
+    } catch (error) {
+        console.error(`Error - ${error}`)
+
+    }
+
 
 });
 router.post('/delete', adminAuthMiddleware, (req, res) => {

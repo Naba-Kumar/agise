@@ -1,19 +1,20 @@
 const pg = require('pg');
+require('dotenv').config();
 
 const poolUser = new pg.Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'agisuser',
-    password: '12345',
-    port: 5432
+    user: process.env.db_user,
+    host: process.env.host,
+    database:process.env.user_db,
+    password: process.env.db_pw,
+    port: process.env.db_port
 });
 
 const poolShp = new pg.Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'testgis',
-    password: '12345',
-    port: 5432
+    user: process.env.db_user,
+    host: process.env.host,
+    database:process.env.shp_db,
+    password: process.env.db_pw,
+    port: process.env.db_port
 });
 module.exports = {
     poolUser:poolUser,

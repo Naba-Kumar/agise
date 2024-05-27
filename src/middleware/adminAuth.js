@@ -36,6 +36,9 @@ const adminAuthMiddleware = (req, res, next) => {
   if (!token) {
     console.log("Token not found. Redirecting to login.");
     return res.redirect('/admin');
+    const data = { message: 'Error publishing to GeoServer', title: "Oops?", icon: "danger" , redirect:"/admin" };
+            console.log(data)
+            return res.status(500).json(data);
   }
 
   if (decodedToken.exp < currentTime) {

@@ -35,14 +35,31 @@ async function createTables() {
         isresolved BOOLEAN NOT NULL
       ); 
 
+      CREATE TABLE IF NOT EXISTS shapefiles (
+        file_id SERIAL PRIMARY KEY,
+        file_name VARCHAR(200) NOT NULL,
+        is_added BOOLEAN
+      );
+
+      CREATE TABLE IF NOT EXISTS shapefile_track (
+        file_id SERIAL PRIMARY KEY,
+        file_name VARCHAR(200) NOT NULL,
+        workspace VARCHAR(200) NOT NULL,
+        dataStore VARCHAR(300) NOT NULL,
+        public BOOLEAN
+      );
+
       CREATE TABLE IF NOT EXISTS catalog (
-        fileid SERIAL PRIMARY KEY,
+        sn SERIAL PRIMARY KEY,
+        file_name VARCHAR(200) NOT NULL,
+        file_id VARCHAR(10) NOT NULL,
+        workspace VARCHAR(200) NOT NULL,
+        store VARCHAR(300) NOT NULL,
         title VARCHAR(200) NOT NULL,
-        filename VARCHAR(200) NOT NULL,
-        wmslink VARCHAR(200) NOT NULL,
         description VARCHAR(300) NOT NULL,
         visibility BOOLEAN
       ); 
+
 
       CREATE TABLE IF NOT EXISTS requests (
         requestno SERIAL PRIMARY KEY,

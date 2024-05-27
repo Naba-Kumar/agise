@@ -17,47 +17,67 @@
 
 
                 <!-- Table Element -->
-                <form action="#" method="post">
-                    
+                <form id="adminUploadForm" class="form" action="" method="post">
 
                     <div class="row mt-3">
                         <div class="col-md-6">
                             <div class="form-group first">
-                                <label for="lname">Shapefile Name *[Exactly same as uploaded file]</label>
-                                <input type="text" class="form-control" placeholder="e.g. https://google.com"
-                                    id="lname">
+                                <label for="table_name">Shapefile Name<span class="text-danger">*[no space,special chareacter]</span></label>
+                                <input type="text" class="form-control" placeholder="e.g. assam_state_boundary"
+                                    id="table_name" name="table_name">
                             </div>
                         </div>
 
 
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="workspace">Geoserver Workspace <span class="text-danger">*</span><span
+                                    class="text-danger"></span></label>
+                            <select class="form-control" id="workspace" name="workspace">
+                                <option value="">Select Workspace</option>
+                                <option value="catalog">catalog</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <label for="dataStore">Geoserver DataStore <span class="text-danger">*</span><span
+                                    class="text-danger"></span></label>
+                            <select class="form-control" id="dataStore" name="data_store">
+                                <option value="">Select DataStore</option>
+                                <option value="catalog">catalog</option>
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="row mt-3">
+                        <div class="col-md-6">
+                            <div class="form-group first">
+                                <label for="srid">SRID <span class="text-danger">*</span></label>
+                                <input type="text" class="form-control" id="srid" name="srid" value="4326">
+                            </div>
+                        </div>
                     </div>
 
                     <div class="row mt-3">
                         <div class="col-md-6">
 
                             <div class="form-group first">
-                                <label for="lname">upload</label>
-                                <input type="file" class="form-control" placeholder="Your Password" id="password">
+                                <label for="shapefile">Select Sahpefile <span class="text-danger">*</span></label>
+                                <input type="file" class="form-control" placeholder="shapefile" id="shapefile"
+                                    name="shapefile">
 
                             </div>
                         </div>
 
                     </div>
 
-                    <div class="row mt-3">
-                        <div class="col-md-6">
+                    <input type="submit" name="submit" value="Upload" class="btn px-5 btn-primary mt-2">
 
-                            <div class="form-group last mb-3">
-                                <label for="password">Description*</label>
-                                <textarea type="text" class="form-control" placeholder="Your Password"
-                                    id="password"></textarea>
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <input type="submit" value="Upload" class="btn px-5 btn-primary mt-2">
-                    
 
                 </form>
 
