@@ -46,6 +46,8 @@ const shpupload = multer({
 });;
 
 
+
+
 router.get('/', (req, res) => {
     // Your OpenLayers logic here
     res.render("adminLogin");
@@ -138,6 +140,12 @@ router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), a
     console.log("jij")
     try {
         const { table_name, workspace, data_store, srid } = req.body;
+
+        if(!table_name || !workspace || !data_store || !srid){
+            const data = { message: 'All Fields Are Required', title: "Alert", icon: "warning", redirect: '\\admin\\upload' };
+            return res.status(400).json(data);
+        }
+
         const client = await pool.poolShp.connect();
 
         const query = `
@@ -215,7 +223,8 @@ router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), a
             try {
                 const client = await pool.poolUser.connect();
 
-                await client.query(query, values);
+                const checkUpload = await client.query(query, values);
+                
                 client.release();
                 console.log('Shapefile uploaded successfully');
                 const data = { message: 'Shapefile uploaded successfully', title: "uploaded", icon: "success", redirect: '\\admin\\upload' };
@@ -349,6 +358,8 @@ router.post('/catalog', adminAuthMiddleware, login.single('id_proof'), async (re
             return res.json(data)
         }
 
+        console.log(req.body)
+
 
         axios.post(`http://localhost:8080/geoserver/rest/workspaces/${workspace}/datastores/${store}/featuretypes`, {
             featureType: {
@@ -369,6 +380,8 @@ router.post('/catalog', adminAuthMiddleware, login.single('id_proof'), async (re
             const client = await pool.poolUser.connect();
 
             const visibility = true;
+
+            console.log("heyyyyyyyyyyyyyyyy")
     
             const query = `
                 INSERT INTO catalog( file_name, file_id, workspace, store, title, description, visibility)
@@ -384,7 +397,10 @@ router.post('/catalog', adminAuthMiddleware, login.single('id_proof'), async (re
                 visibility
             ];
     
-            await client.query(query, values);
+            const checkUpload = await client.query(query, values);
+            console.log("-------------------")
+            console.log(checkUpload)
+            console.log("-------------------")
             client.release();
 
 
@@ -424,9 +440,17 @@ router.get('/delete', adminAuthMiddleware, (req, res) => {
 // });
 
 
-router.get('/queries', adminAuthMiddleware, (req, res) => {
+router.get('/queries', adminAuthMiddleware, async(req, res) => {
     // Your OpenLayers logic here
-    res.render("adminQueries");
+    try {
+        const client = await pool.poolUser.connect();
+        const { rows } = await client.query('SELECT * FROM queries');
+        client.release();
+        res.render('adminQueries', { queries: rows });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
 
 });
 router.post('/queries', adminAuthMiddleware, (req, res) => {
