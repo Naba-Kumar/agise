@@ -337,7 +337,7 @@ router.get('/catalog', adminAuthMiddleware,  async (req, res) => {
         const client = await pool.poolUser.connect();
         const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles');
         client.release();
-        res.render('adminAddCatalog', { items: rows });
+        res.render('adminAddCatalog', { catalogItems: rows });
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');

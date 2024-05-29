@@ -1,10 +1,30 @@
+
 const express = require('express');
 const router = express.Router();
+require('dotenv').config();
+const bodyParser = require('body-parser');
+const pool = require('../db/connection');
+const multer = require('multer');
+const path = require('path');
+const adminAuthMiddleware = require("../middleware/adminAuth")
+const jwt = require('jsonwebtoken');
+const childProcess = require('child_process');
+const { exec } = childProcess;
+const AdmZip = require('adm-zip');
+const axios = require('axios');
+
+const cookieParser = require('cookie-parser');
+const { log } = require('console');
+router.use(cookieParser());
+
+router.use(bodyParser.json());
+router.use(bodyParser.urlencoded({ extended: true }));
 
 router.get('/', async(req, res) => {
 //    
     try {
-        const result = await pool.query('SELECT id, name, title, description FROM catalog');
+        const client = await pool.poolUser.connect();
+        const result = await client.query('SELECT file_name, file_id, workspace, title, description FROM catalog');
         const catalogItems = result.rows;
         res.render('catalog', { catalogItems });
     } catch (err) {
