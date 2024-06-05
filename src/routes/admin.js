@@ -141,7 +141,7 @@ router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), a
     try {
         const { table_name, workspace, data_store, srid } = req.body;
 
-        if(!table_name || !workspace || !data_store || !srid){
+        if (!table_name || !workspace || !data_store || !srid) {
             const data = { message: 'All Fields Are Required', title: "Alert", icon: "warning", redirect: '\\admin\\upload' };
             return res.status(400).json(data);
         }
@@ -224,7 +224,7 @@ router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), a
                 const client = await pool.poolUser.connect();
 
                 const checkUpload = await client.query(query, values);
-                
+
                 client.release();
                 console.log('Shapefile uploaded successfully');
                 const data = { message: 'Shapefile uploaded successfully', title: "uploaded", icon: "success", redirect: '\\admin\\upload' };
@@ -332,10 +332,10 @@ router.get('/catalog/:file_name', async (req, res) => {
 });
 
 // Route to render the form with file names
-router.get('/catalog', adminAuthMiddleware,  async (req, res) => {
+router.get('/catalog', adminAuthMiddleware, async (req, res) => {
     try {
         const client = await pool.poolUser.connect();
-        const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles');
+        const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE is_added=false');
         client.release();
         res.render('adminAddCatalog', { catalogItems: rows });
     } catch (err) {
@@ -366,7 +366,15 @@ router.post('/catalog', adminAuthMiddleware, login.single('id_proof'), async (re
                 name: file_name,
                 nativeName: file_name,
                 title: file_name,
-                srs: 'EPSG:4326'
+                srs: 'EPSG:4326',
+                attributes: {
+                    attribute: [
+                      { name: 'name', binding: 'java.lang.String' },
+                      { name: 'description', binding: 'java.lang.String' },
+                      { name: 'latitude', binding: 'java.lang.Double' },
+                      { name: 'longitude', binding: 'java.lang.Double' }
+                    ]
+                  }
             }
         }, {
             auth: {
@@ -376,13 +384,16 @@ router.post('/catalog', adminAuthMiddleware, login.single('id_proof'), async (re
         }).then(async response => {
             // res.send('Shapefile uploaded and published successfully');
             console.log('--------------------------------------')
+            console.log(response)
+            console.log('--------------------------------------')
+
 
             const client = await pool.poolUser.connect();
 
             const visibility = true;
 
             console.log("heyyyyyyyyyyyyyyyy")
-    
+
             const query = `
                 INSERT INTO catalog( file_name, file_id, workspace, store, title, description, visibility)
                 VALUES ($1, $2, $3, $4, $5, $6, $7)
@@ -396,12 +407,31 @@ router.post('/catalog', adminAuthMiddleware, login.single('id_proof'), async (re
                 description,
                 visibility
             ];
-    
+
             const checkUpload = await client.query(query, values);
+
+
+
+            const shapefile_table_query = `
+            UPDATE shapefiles
+            SET is_added=$1
+            WHERE file_name=$2
+             `;
+
+            const shapefile_table_update = [true, file_name]
+
+            await client.query(shapefile_table_query, shapefile_table_update);
+
             console.log("-------------------")
             console.log(checkUpload)
             console.log("-------------------")
             client.release();
+
+            console.error('Error publishing to to GeoServer:', error);
+            const data = { message: 'File Published to GeoServer', title: "Success", icon: "success" };
+            console.log(data)
+            return res.status(500).json(data);
+
 
 
 
@@ -440,7 +470,7 @@ router.get('/delete', adminAuthMiddleware, (req, res) => {
 // });
 
 
-router.get('/queries', adminAuthMiddleware, async(req, res) => {
+router.get('/queries', adminAuthMiddleware, async (req, res) => {
     // Your OpenLayers logic here
     try {
         const client = await pool.poolUser.connect();

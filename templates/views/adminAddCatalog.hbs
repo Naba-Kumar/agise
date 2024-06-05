@@ -24,7 +24,7 @@
                                 <label for="file_name">File Name</label>
                                 <select id="file_name" class="form-control" name="file_name">
                                     <option value="">Select File Name</option>
-                                    {{#each items}}
+                                    {{#each catalogItems}}
                                     <option value="{{this.file_name}}">{{this.file_name}}</option>
                                     {{/each}}
                                 </select>
