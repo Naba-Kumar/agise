@@ -462,6 +462,99 @@ router.get('/delete', adminAuthMiddleware, (req, res) => {
 });
 
 
+router.get('/manage', adminAuthMiddleware, async (req, res) => {
+    try {
+        const client = await pool.poolUser.connect();
+        const result = await client.query('SELECT sn, file_id, file_name, title, visibility  FROM catalog');
+        client.release();
+
+        const catalogItems = result.rows;
+
+        // client.release();
+        res.render('adminCatalogManage', { catalogItems});
+
+        // res.render('adminAddCatalog', { catalogItems: rows });
+        // res.render('adminCatalogManage');
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+
+router.put('/manage', adminAuthMiddleware, login.single('id_proof'), async (req, res) => {
+    console.log(req.body)
+    const { id, visibility} = req.body;
+    if(!id || !visibility){
+
+    }
+
+    try {
+        const client = await pool.poolUser.connect();         
+        const query = `
+                    UPDATE catalog
+                    SET visibility=$1
+                    WHERE sn=$2
+                    `;
+                const values = [
+                    visibility,
+                    id
+                ];
+    
+                const checkUpload = await client.query(query, values);
+                return res.status().json({icon:'success'})
+                console.log(checkUpload)
+        
+    } catch (error) {
+        
+    }
+
+})
+
+router.get('/iso', adminAuthMiddleware, async (req, res) => {
+    try {
+        // const client = await pool.poolUser.connect();
+        // const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE is_added=false');
+        // client.release();
+        // res.render('adminAddCatalog', { catalogItems: rows });
+        res.render('adminFileRequestsISo');
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get('/privilege', adminAuthMiddleware, async (req, res) => {
+    try {
+        // const client = await pool.poolUser.connect();
+        // const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE is_added=false');
+        // client.release();
+        // res.render('adminAddCatalog', { catalogItems: rows });
+        res.render('adminPrivilege');
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get('/search', adminAuthMiddleware, async (req, res) => {
+    try {
+        // const client = await pool.poolUser.connect();
+        // const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE is_added=false');
+        // client.release();
+        // res.render('adminAddCatalog', { catalogItems: rows });
+        res.render('adminSearch');
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+
 
 // router.get('/login', (req, res) => {
 //     // Your OpenLayers logic here

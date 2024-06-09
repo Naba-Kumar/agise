@@ -161,6 +161,46 @@ document.getElementById('adminLogout').addEventListener('click', function(e) {
     handleAdminLogout (e, '/admin/logout');
 });
 
+// 3rd
+
+
+function handleCatalogView (event, url) {
+    event.preventDefault(); // Prevent the default form submission
+
+
+    fetch(url, { // Send the FormData object to the specified route
+        method: 'POST',
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log(data);
+        if (data) {
+            Swal.fire({
+                title: data.title,
+                text: data.message,
+                confirmButtonText: "OK",
+
+                icon: data.icon
+            }).then((result) => {
+                    /* Read more about isConfirmed, isDenied below */
+                    if (result.isConfirmed) {
+                        if(data.redirect != undefined){
+                            window.location.href = data.redirect; // Replace with your desired URL
+                        }
+                    } 
+                  });
+        } // Handle the response data
+    })
+    .catch(error => {
+        console.error('Error:', error); // Handle any errors
+    });
+}
+// Attach event listeners to each form, passing the appropriate endpoint URL
+document.getElementById('adminLogout').addEventListener('click', function(e) {
+    handleCatalogView (e, '/catalog/');
+});
+
+
 
 // ---------------------------------------
 
@@ -191,6 +231,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
   
+
+
+
 
 
 

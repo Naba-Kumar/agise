@@ -1,3 +1,4 @@
+<div id="placeholder" class="js-sidebar"></div>
 <aside id="sidebar" class="js-sidebar">
     <!-- Content For Sidebar -->
     <div class="h-100">
@@ -5,42 +6,74 @@
             <a href="#">Assam Gis Explorer</a>
         </div>
         <ul class="sidebar-nav">
-            <li class="sidebar-header">
+            {{!-- <li class="sidebar-header">
                 Admin Elements
-            </li>
+            </li> --}}
+            <hr>
 
-            <li class="sidebar-item">
+            <li class="sidebar-item active">
                 <a href="/admin/home" class="sidebar-link">
-                    <i class="fa-solid fa-list pe-2"></i>
+                    <span class="material-symbols-outlined">home</span>
                     Home
                 </a>
             </li>
+            {{!-- <div class="hr"></div> --}}
 
             <li class="sidebar-item">
-                <a href="/admin/requests
-                " class="sidebar-link">
-                    <i class="fa-solid fa-list pe-2"></i>
-                    Applications
+                <a href="/admin/requests" class="sidebar-link">
+                    <span class="material-symbols-outlined">data_table</span> Requests
                 </a>
             </li>
+            {{!-- <div class="hr"></div> --}}
+            <li class="sidebar-item">
+                <a href="/admin/iso" class="sidebar-link">
+                    <span class="material-symbols-outlined">data_info_alert</span> Isolated Requests
+                </a>
+            </li>
+
+            <li class="sidebar-item">
+                <a href="/admin/privilege" class="sidebar-link">
+                    <span class="material-symbols-outlined">admin_panel_settings</span> Manage privilege
+                </a>
+            </li>
+            <li class="sidebar-item">
+                <a href="/admin/search" class="sidebar-link">
+                    <span class="material-symbols-outlined">manage_search</span> Search User
+                </a>
+            </li>
+            {{!-- <div class="hr"></div> --}}
+
             <li class="sidebar-item">
                 <a href="/admin/upload" class="sidebar-link">
-                    <i class="fa-solid fa-list pe-2"></i>
-                    Uploads
+                    <span class="material-symbols-outlined">cloud_upload</span> Uploads
                 </a>
             </li>
+            {{!-- <div class="hr"></div> --}}
+
             <li class="sidebar-item">
                 <a href="/admin/catalog" class="sidebar-link">
-                    <i class="fa-solid fa-list pe-2"></i>
-                    Add To Catalog
+                    <span class="material-symbols-outlined">grid_view</span> Add To Catalog
                 </a>
             </li>
-                        <li class="sidebar-item">
+            {{!-- <div class="hr"></div> --}}
+
+
+            <li class="sidebar-item">
+                <a href="/admin/manage" class="sidebar-link">
+                    <span class="material-symbols-outlined">bookmark_manager</span>
+                    Manage catalog
+                </a>
+            </li>
+            {{!-- <div class="hr"></div> --}}
+
+            <li class="sidebar-item">
                 <a href="/admin/delete" class="sidebar-link">
-                    <i class="fa-solid fa-list pe-2"></i>
-                    Delete From Catalog
+                    <span class="material-symbols-outlined">delete</span>
+                    Delete Parmanent
                 </a>
             </li>
+            {{!-- <div class="hr"></div> --}}
+
             {{!-- <li class="sidebar-item">
                 <a href="/admin/update" class="sidebar-link">
                     <i class="fa-solid fa-list pe-2"></i>
@@ -49,17 +82,20 @@
             </li> --}}
             <li class="sidebar-item">
                 <a href="/admin/Queries" class="sidebar-link">
-                    <i class="fa-solid fa-list pe-2"></i>
+                    <span class="material-symbols-outlined">quiz</span>
                     Queries
                 </a>
             </li>
-            
+            {{!-- <div class="hr"></div> --}}
+
+
             <li class="sidebar-item" id="adminLogout">
                 <a class="sidebar-link">
-                    <i class="fa-solid fa-list pe-2"></i>
-                    Logout
+                    <span class="material-symbols-outlined">logout</span> Logout
                 </a>
             </li>
+            <div class="hr"></div>
+
             {{!-- <li class="sidebar-item">
                 <a href="#" class="sidebar-link collapsed" data-bs-target="#pages" data-bs-toggle="collapse"
                     aria-expanded="false"><i class="fa-solid fa-file-lines pe-2"></i>

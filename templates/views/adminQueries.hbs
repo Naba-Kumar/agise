@@ -16,90 +16,163 @@
             <div class="container-fluid">
 
                 <!-- Table Element -->
-                <form action="#" method="post">
+                <form action="#" method="post" class="card-body">
                     {{#each queries}}
 
                     Query No:- {{this.queryid}}
+                    <div class="card p-2">
 
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="fname"> Name *</label>
-                                <input type="text" class="form-control" id="fname" value="{{this.full_name}}" readonly>
+
+
+                        <div class="row  ">
+                            <div class="col-md-6 mb-2">
+                                <p class="card-text">Name : {{this.full_name}}</p>
                             </div>
+                            <div class="col-md-6 mb-2">
+                                <p class="card-text">Email : {{this.email}}</p>
+                            </div>
+
                         </div>
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="lname">Email *</label>
-                                <input type="text" class="form-control" id="email" value="{{this.email}}" readonly>
+
+                        <div class="row ">
+                            <div class="col-md-6 mb-2">
+                                <p class="card-text">Mobile : {{this.mobile}}</p>
                             </div>
+                            <div class="col-md-6 mb-2">
+                                <p class="card-text">Occupation : {{this.occupation}}</p>
+                            </div>
+
+                        </div>
+
+
+                        <div class="row mt-1">
+                            <div class="col-md-6">
+                                <div class="form-group first">
+                                    <p class="card-text">Subject :</p>
+                                    <div class="card">
+                                        <p class="card-text m-2" style="height: 55px;">{{this.reason}}</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6">
+                                <div class="form-group last mb-1">
+
+                                    <p class="card-text">Reply :</p>
+                                    <div class="card">
+                                        <p class="card-text m-2" style="height: 55px;">{{this.message}}</p>
+
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="row mt-3">
+                            <div class="col-md-12">
+                                <div class="form-group first">
+                                    <p class="card-text">Send Email To:- {{this.email}} <span
+                                            class="text-danger">[Optional]</span> </p>
+                                    {{!-- <input type="text" class="form-control" value="{{this.reason}}"
+                                        style="height: 100px;" id="reason"> --}}
+                                    <textarea type="te" class="form-control" style="height: 70px;"
+                                        value="{{this.reason}}" id="reason">{{this.reason}}</textarea>
+                                </div>
+
+                            </div>
+                            <div class="col-md-6">
+
+                                <div class="form-group last mb-1">
+                                    <input type="submit" value="Ignor" class="btn px-5 btn-primary mt-2">
+                                    <input type="submit" value="Send Email" class="btn px-5 btn-primary mt-2">
+                                </div>
+                            </div>
+
+                        </div>
+
+
+
+
+                    </div>
+
+                    {{/each}}
+
+                    {{#each queries}}
+
+
+                    <div class="card">
+                        <div class="row ">
+                            <div class="row m-1 ">
+                                <div class="col-md-6">
+                                    <p class="card-text">Name : {{this.full_name}}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="card-text">Email : {{this.email}}</p>
+                                </div>
+
+                            </div>
+
+                            <div class="row m-1 ">
+                                <div class="col-md-6">
+                                    <p class="card-text">Mobile : {{this.mobile}}</p>
+                                </div>
+                                <div class="col-md-6">
+                                    <p class="card-text">Occupation : {{this.occupation}}</p>
+                                </div>
+
+                            </div>
+                            <div id="query-flex">
+
+
+                                <div class="col-md-6 m-1">
+                                    <div class="m-1 col-md-11 ">
+                                        <div class="col-md-12">
+                                            <p class="card-text">Subject :</p>
+                                            <div class="card">
+                                                <p class="card-text m-1">{{this.reason}}</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+
+                                    <div class="m-1 col-md-11 ">
+                                        <div class="col-md-12">
+                                            <p class="card-text">Message :</p>
+                                            <div class="card">
+                                                <p class="card-text m-1">{{this.message}}</p>
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <div class="m-1 col-md-10">
+                                    <div class="col-md-6">
+                                        <p class="card-text">Reply :</p>
+                                        <div class="card">
+                                            <p class="card-text m-1">{{this.message}}</p>
+
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                            </div>
+                            <div class="col-md-7 px-3">
+                                <div class="card-block px-6">
+
+                                    <br>
+                                    <a href="#" class="m-1 btn btn-primary  ">Read More</a>
+                                </div>
+                            </div>
+                            <!-- Carousel start -->
+
+                            <!-- End of carousel -->
                         </div>
                     </div>
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="fname">Mobile No *</label>
-                                <input type="text" class="form-control" id="mobile" value="{{this.mobile}}" readonly>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="lname">Occupation *</label>
-                                <input type="text" class="form-control" id="occupation" value="{{this.occupation}}" readonly>
-                            </div>
-                        </div>
-                    </div>
-
-
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="lname">Reason of Contact *</label>
-                                <textarea readonly class="form-control" style="height: 100px;" id="reason">{{this.reason}}</textarea>
-                                
-                            </div>
-                        </div>
-
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="reply">Send Email To:- {{this.email}} <span class="text-danger">[Optional]</span> </label>
-                                {{!-- <input type="text" class="form-control" value="{{this.reason}}" style="height: 100px;" id="reason"> --}}
-                                 <textarea type="te" class="form-control" style="height: 100px;" value="{{this.reason}}" id="reason">{{this.reason}}</textarea>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-
-
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-
-                            <div class="form-group last mb-3">
-                                <label for="password">Message</label>
-                                {{!-- <input type="text" class="form-control" id="message" style="height: 100px;" value="{{this.message}}"> --}}
-                                <textarea readonly class="form-control" style="height: 100px;" value="{{this.reason}}" id="reason">{{this.message}}</textarea>
-
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-
-                            <div class="form-group last mb-3">
-                                <input type="submit" value="Send Email" class="btn px-5 btn-primary mt-4">
-                            </div>
-                        </div>
-
-                    </div>
-
-                    <input type="submit" value="Resolved" class="btn px-5 btn-primary mt-2">
-                    <br>
-                    <br>
-                    <br>
-                    <br>
-
-
-
                     {{/each}}
 
                 </form>
@@ -110,4 +183,6 @@
 
     </div>
 </div>
+
+<!-- Card Start -->
 {{>footer}}

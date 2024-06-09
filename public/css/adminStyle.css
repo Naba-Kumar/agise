@@ -13,6 +13,16 @@ body {
     overflow-y: scroll;
     margin: 0;
 }
+#placeholder{
+
+    max-width: 264px;
+min-width: 264px;
+height: 100vh;
+}
+
+#sidebar{
+    position: fixed;
+}
 
 a {
     cursor: pointer;
@@ -32,6 +42,115 @@ h4 {
 
 /* Layout for admin dashboard skeleton */
 
+
+// Bootstrap resets
+.card {
+  border: none;
+}
+.card-img {
+  border-radius: 0;
+}
+
+.vgr-cards {
+  .card {
+    display: flex;
+    flex-flow: wrap;
+    flex: 100%;
+
+    &:nth-child(even) .card-img-body {
+      order: 2;
+    }
+
+    &:nth-child(even) .card-body {
+      padding-left: 0;
+      padding-right: 1.25rem; 
+    }
+    
+    @media (max-width: 576px) {
+      display: block;
+    }
+    
+  }
+
+  .card-img-body {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    
+    @media (max-width: 576px) {
+      width: 100%;
+      height: 200px;
+          margin-bottom: 20px;
+    }
+    
+  }
+  
+  .card-img {
+    width: auto;
+    height: 100%;
+    position: absolute;
+    margin-left: 50%;
+    transform: translateX(-50%);
+    
+    @media (max-width: 1140px) {
+          margin: 0;
+    transform: none;
+    width: 100%;
+    height: auto;
+    }
+    
+  }
+
+  .card-body {
+    flex: 2;
+    padding: 0 0 0 1.25rem;
+    
+    @media (max-width: 576px) {
+      padding: 0;
+    }
+    
+  }
+}
+
+
+li{
+    padding: 1px;
+}
+
+li:hover{
+    background-color: #035358;
+    color: #fff;
+
+}
+a:hover{
+    color: #fff;
+}
+
+.sidebar-nav  li.active{
+    background-color: #8a308a;
+    color: #41de0c;
+}
+
+.card{
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    margin: 0 auto;
+    float: none;
+    /* margin-bottom: 10px; */
+}
+
+#query-flex{
+    display: flex;
+}
+
+.hr{
+    height: 1px;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: #186e64;
+}
+
 .wrapper {
     /* align-items: stretch; */
     display: flex;
@@ -41,6 +160,7 @@ h4 {
 #sidebar {
     max-width: 264px;
     min-width: 264px;
+    height: 100vh;
     background: var(--bs-primary);
     transition: all 0.35s ease-in-out;
 }
@@ -80,6 +200,9 @@ h4 {
     color: #e9ecef;
     font-size: .75rem;
     padding: 1.5rem 1.5rem .375rem;
+}
+.sidebar-link{
+ font-size: 40px;
 }
 
 a.sidebar-link {
@@ -132,7 +255,6 @@ a.sidebar-link {
 
 .card {
     box-shadow: 0 0 .875rem 0 rgba(34, 46, 60, .05);
-    margin-bottom: 24px;
 }
 
 .illustration {

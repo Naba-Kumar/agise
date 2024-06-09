@@ -13,10 +13,30 @@ const userAuthMiddleware = (req, res, next) => {
   console.log("token")
 
   console.log(token)
+  function parseJwt(token) {
+    try {
+      return JSON.parse(atob(token.split('.')[1]));
+    } catch (e) {
+      return null;
+    }
+  }
+
+  
+  const decodedToken = parseJwt(token);
+  const currentTime = Math.floor(Date.now() / 1000);
 
   if (!token) {
-    return res.status(401).send({ error: 'Access denied' });
+    console.log("Token not found. Redirecting to login.");
+    // return res.redirect('/admin');
+    const data = { message: 'Login First!!', title: "Oops?", icon: "danger" , redirect:"/admin" };
+            console.log(data)
+            return res.status(500).json(data);
   }
+
+  if (decodedToken.exp < currentTime) {
+    const data = { message: 'Login First1!!', title: "Oops?", icon: "danger" , redirect:"/admin" };
+    console.log(data)
+    return res.status(500).json(data);  }
 
   try {
     const decoded = jwt.verify(token, process.env.secretKey);

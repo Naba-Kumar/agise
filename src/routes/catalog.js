@@ -6,7 +6,7 @@ const bodyParser = require('body-parser');
 const pool = require('../db/connection');
 const multer = require('multer');
 const path = require('path');
-const adminAuthMiddleware = require("../middleware/adminAuth")
+const userAuthMiddleware = require("../middleware/userAuth")
 const jwt = require('jsonwebtoken');
 const childProcess = require('child_process');
 const { exec } = childProcess;
@@ -36,8 +36,39 @@ router.get('/', async(req, res) => {
 
 
 
-router.get('/view/:id', (req, res) => {
+router.get('/:id', async(req, res) => {
     const id = req.params.id;
+    // res.render("catalogView")
+    try {
+        const client = await pool.poolUser.connect();
+        const result = await client.query('SELECT * FROM catalog');
+        const catalogItems = result.rows;
+
+        client.release();
+        res.render('catalogView', { catalogItems});
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+    // Logic to view the shapefile
+});
+
+
+router.post('/:id', userAuthMiddleware, async(req, res) => {
+    // const id = req.params.id;
+    // res.render("catalogView")
+    try {
+        console.log(req.body)
+        // const client = await pool.poolUser.connect();
+        // const result = await client.query('SELECT * FROM catalog');
+        // const catalogItems = result.rows;
+
+        // client.release();
+        // res.render('catalogView', { catalogItems});
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
     // Logic to view the shapefile
 });
 

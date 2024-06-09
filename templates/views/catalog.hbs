@@ -32,10 +32,11 @@
                     <div class="bg-light rounded h-100 p-1">
                         <div id="map-{{@index}}" class="map" style="height: 200px; width: 100%;"></div>
                         <h4 class="mb-3 p-4">{{this.title}}</h4>
+                        {{!-- <p class="mb-3 p-4">{{this.file_name}}</p> --}}
                         <p class="mb-4 p-4">{{this.description}}</p>
                         <div>
-                            <a class="btn btn-primary text-white py-1 px-0 m-0 mt-3 col-lg-4" href="">View</a>
-                            <a class="btn btn-primary text-white py-1 px-0 m-0 mt-3 col-lg-4" href="">Request</a>
+                            <a class="btn btn-primary text-white py-1 px-0 m-0 mt-3 col-lg-4" href="/catalog/{{this.file_name}}">View</a>
+                            <a class="btn btn-primary text-white py-1 px-0 m-0 mt-3 col-lg-4" id="request" >Request</a>
                             <a class="btn btn-primary text-white py-1 px-0 m-0 mt-3 col-lg-3" href="">Download</a>
                         </div>
                     </div>
@@ -48,9 +49,11 @@
     {{>homeFooter}}
 
     <script src="https://cdn.jsdelivr.net/npm/ol@v9.2.4/dist/ol.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            {{#each catalogItems}}
+    {{#each catalogItems}}
             const map = new ol.Map({
                 target: 'map-{{@index}}',
                 layers: [
@@ -71,8 +74,61 @@
                     zoom: 6
                 })
             });
+
             {{/each}}
-        });
+            // Add an event listener to the "Request" button
+
+            {{#each catalogItems}}
+            document.getElementById('request').addEventListener('click', function () {
+
+                const fileName = '{{this.file_name}}'; // Get the value dynamically
+
+                // Make a POST request to your server
+                fetch('/catalog/{{this.file_name}}', {
+            {{/each}}
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        // Add any other headers you need (e.g., authorization)
+                    },
+                    body: JSON.stringify({ file_name: fileName }) // Send the value in the request body
+                })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data) {
+                        Swal.fire({
+                            title: data.title,
+                            text: data.message,
+                            confirmButtonText: "OK",
+
+                            icon: data.icon
+                        }).then((result) => {
+                                /* Read more about isConfirmed, isDenied below */
+                                if (result.isConfirmed) {
+                                    if(data.redirect != undefined){
+                                        window.location.href = data.redirect; // Replace with your desired URL
+                                    }
+                                } 
+                            });
+
+                    
+                        
+                    } else {
+                        console.error('Unexpected response format:', data);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Unexpected response format.',
+                            icon: 'error'
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('An error occurred:', error);
+                });
+            });
+
+                });
     </script>
 </body>
 

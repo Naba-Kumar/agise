@@ -15,112 +15,133 @@
         <main class="content px-3 py-2">
             <div class="container-fluid">
 
-
                 <!-- Table Element -->
-                <form action="#" method="post">
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="fname">First Name *</label>
-                                <input type="text" class="form-control" placeholder="e.g. John" id="fname">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="lname">Last Name *</label>
-                                <input type="text" class="form-control" placeholder="e.g. Smith" id="lname">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="fname">Mobile No *</label>
-                                <input type="text" class="form-control" placeholder="e.g. John" id="fname">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="lname">Organization Name *</label>
-                                <input type="text" class="form-control" placeholder="e.g. Smith" id="lname">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="fname">Department *</label>
-                                <input type="text" class="form-control" placeholder="e.g. John" id="fname">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="lname">Designation *</label>
-                                <input type="text" class="form-control" placeholder="e.g. Smith" id="lname">
-                            </div>
-                        </div>
-                    </div>
+                <form action="#" method="post" class="card-body">
+                <div class="input-group mb-3">
+                    <input type="search" class="form-control " placeholder="Search" aria-label="Search"
+                        aria-describedby="search-addon" />
+                    <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
+                </div>
+                    {{!-- {{#each queries}} --}}
 
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="lname">E-mail address *</label>
-                                <input type="text" class="form-control" placeholder="e.g. https://google.com"
-                                    id="lname">
-                            </div>
-                        </div>
-
-                    </div>
+                    {{!-- Query No:- {{this.queryid}} --}}
+                    {{!-- <div class="card p-2">
 
 
 
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="lname">User Type *</label>
-                                <input type="text" class="form-control" placeholder="e.g. https://google.com"
-                                    id="lname">
+                        <div class="row  ">
+                            <div class="col-md-6 mb-2">
+                                <p class="card-text">Name : {{this.full_name}}</p>
+                            </div>
+
+                        </div>
+                        <div class="row ">
+                            <div class="col-md-6 mb-2">
+                                <p class="card-text">Email : {{this.email}}</p>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <div class="form-group first">
-                                <label for="lname">Data Requested *</label>
-                                <input type="text" class="form-control " placeholder="e.g. https://google.com"
-                                    id="lname">
+                        <div class="row ">
+                            <div class="col-md-6 mb-2">
+                                <p class="card-text">Organization : {{this.mobile}}</p>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-md-6 mb-2">
+                                <p class="card-text">Designation : {{this.mobile}}</p>
+                            </div>
+                        </div>
+                        <div class="row ">
+                            <div class="col-md-6 mb-2">
+                                <p class="card-text">File Title : {{this.mobile}}</p>
                             </div>
                         </div>
 
 
-                    </div>
 
 
 
-                    <div class="row mt-3">
-                        <div class="col-md-6">
 
-                            <div class="form-group last mb-3">
-                                <label for="password">Reason OF Request</label>
-                                <textarea type="text" class="form-control  " placeholder="Your Password"
-                                    id="password"></textarea>
+                        <div class="row mt-3">
+
+                            <div class="col-md-6">
+
+                                <div class="form-group last mb-1">
+                                    <input type="submit" value="Ignor" class="btn px-5 btn-primary mt-2">
+                                    <input type="submit" value="Send Email" class="btn px-5 btn-primary mt-2">
+                                </div>
                             </div>
+
                         </div>
 
-                    </div>
 
-                    <input type="submit" value="Accept" class="btn px-5 btn-primary mt-2">
-                    <input type="submit" value="Reject" class="btn px-5 btn-primary mt-2">
+
+
+                    </div> --}}
+
+                    {{!-- <div class="container"> --}}
+                        <div class="card-group vgr-cards">
+                            <div class="card">
+                                <div class="card-img-body">
+                                    <img class="card-img" src="https://picsum.photos/500/230" alt="Card image cap">
+                                </div>
+                                <div class="card">
+                                    <div class="card-img-body">
+                                        <img class="card-img" src="https://picsum.photos/450/250" alt="Card image cap">
+                                    </div>
+                                    <div class="card-body p-1">
+                                        <h4 class="card-title">Card title</h4>
+                                        <div class="row  ">
+                                            <div class="col-md-6 mb-2">
+                                                <p class="card-text">Name : {{this.full_name}}</p>
+                                            </div>
+
+                                        </div>
+                                        <div class="row ">
+                                            <div class="col-md-6 mb-2">
+                                                <p class="card-text">Email : {{this.email}}</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="row ">
+                                            <div class="col-md-6 mb-2">
+                                                <p class="card-text">Organization : {{this.mobile}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row ">
+                                            <div class="col-md-6 mb-2">
+                                                <p class="card-text">Designation : {{this.mobile}}</p>
+                                            </div>
+                                        </div>
+                                        <div class="row ">
+                                            <div class="col-md-6 mb-2">
+                                                <p class="card-text">File Title : {{this.mobile}}</p>
+                                            </div>
+                                        </div>
+
+                                        {{!-- <a href="#" class="btn btn-outline-primary">Primary</a> --}}
+                                        <input type="submit" value="Approve" class="btn px-4 btn-primary mt-2">
+                                        <input type="submit" value="Reject" class="btn px-4 btn-primary mt-2">
+                                        <input type="submit" value="Isolate" class="btn px-4 btn-primary mt-2">
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {{!--
+                    </div> --}}
+                    {{!-- {{/each}} --}}
+
+
+                </form>
 
             </div>
+        </main>
 
-            </form>
 
     </div>
-    </main>
-
-
 </div>
-</div>
+
+<!-- Card Start -->
 {{>footer}}
