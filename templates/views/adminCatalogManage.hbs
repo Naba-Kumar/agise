@@ -75,61 +75,46 @@
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-    // Event listener for delete button click using event delegation
+   document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('tbody').addEventListener('change', function(event) {
         if (event.target.classList.contains('btn-delete')) {
             const button = event.target;
-            const check = button.checked;
-            console.log(check);
-            const row = button.closest('tr');
+            const isChecked = button.checked;
             const id = button.getAttribute('data-id');
+            const title = isChecked ? 'Are you sure?' : 'Are you sure to?';
+            const text = isChecked ? 'List again in catalog?!' : 'Delist from catalog?!';
+            const confirmButtonText = isChecked ? 'Yes, list it!' : 'Yes, delist it!';
 
-            var title, text, cnftxt, visibility;
-
-            if (check === false) {
-                title = 'Are you sure to?';
-                text = "Delist from catalog?!";
-                cnftxt = 'Yes, delist it!';
-                visibility = false;
-            } else if (check === true) {
-                title = 'Are you sure to?';
-                text = "List again in catalog?!";
-                cnftxt = 'Yes, list it!';
-                visibility = true;
-            }
-
-            // Confirm before deletion
             Swal.fire({
                 title: title,
                 text: text,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonText: cnftxt
+                confirmButtonText: confirmButtonText
             }).then((result) => {
                 if (result.isConfirmed) {
-                    // Send fetch request to update the item
                     fetch('/admin/manage', {
                         method: 'PUT',
                         headers: {
                             'Content-Type': 'application/json'
                         },
-                        body: JSON.stringify({ id: id, visibility: visibility })
+                        body: JSON.stringify({ id: id, visibility: isChecked })
                     })
                     .then(response => response.json())
                     .then(data => {
-                        console.log('Response data:', data);
                         if (data.success) {
                             Swal.fire('Updated!', 'The visibility status has been updated.', 'success');
                         } else {
                             Swal.fire('Error!', 'There was an error updating the visibility status.', 'error');
+                            button.checked = !isChecked; // Revert the checkbox state
                         }
                     })
                     .catch(error => {
                         Swal.fire('Error!', 'There was an error updating the visibility status.', 'error');
+                        button.checked = !isChecked; // Revert the checkbox state
                     });
                 } else {
-                    button.checked = !check;
+                    button.checked = !isChecked; // Revert the checkbox state
                 }
             });
         }

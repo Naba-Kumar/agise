@@ -40,10 +40,19 @@ h4 {
     color: var(--bs-emphasis-color);
 }
 
+
+
+ #profile-window{
+            max-width: 85vw;
+        }
+#profile-window{
+    width:84vw
+}
+
 /* Layout for admin dashboard skeleton */
 
 
-// Bootstrap resets
+/* // Bootstrap resets */
 .card {
   border: none;
 }

@@ -24,6 +24,10 @@ const handleFormSubmit = async(event, url)=> {
     const formDataObj = formDataToObject(formData); // Convert FormData to an object for logging
     console.log('Submitting to URL:', url, 'with data:', formDataObj);
 
+    // const catalogRow = this.closest('option');
+  
+
+
     await fetch(url, {
         method: 'POST',
         redirect: 'follow',
@@ -42,6 +46,10 @@ const handleFormSubmit = async(event, url)=> {
                 icon: data.icon
             }).then((result) => {
                     /* Read more about isConfirmed, isDenied below */
+                    if(url === '/admin/catalog'){
+                        // catalogRow.remove();
+
+                    }
                     if (result.isConfirmed) {
                         if(data.redirect != undefined){
                             window.location.href = data.redirect; // Replace with your desired URL

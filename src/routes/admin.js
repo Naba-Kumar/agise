@@ -483,34 +483,33 @@ router.get('/manage', adminAuthMiddleware, async (req, res) => {
 });
 
 
-router.put('/manage', adminAuthMiddleware, login.single('id_proof'), async (req, res) => {
-    console.log(req.body)
-    const { id, visibility} = req.body;
-    if(!id || !visibility){
 
+
+router.put('/manage', adminAuthMiddleware, async (req, res) => {
+    const { id, visibility } = req.body;
+
+    if (id == null || visibility == null) {
+        return res.status(400).json({ error: 'Invalid request' });
     }
 
     try {
-        const client = await pool.poolUser.connect();         
+        const client = await pool.poolUser.connect();
         const query = `
-                    UPDATE catalog
-                    SET visibility=$1
-                    WHERE sn=$2
-                    `;
-                const values = [
-                    visibility,
-                    id
-                ];
-    
-                const checkUpload = await client.query(query, values);
-                return res.status().json({icon:'success'})
-                console.log(checkUpload)
-        
-    } catch (error) {
-        
-    }
+            UPDATE catalog
+            SET visibility = $1
+            WHERE sn = $2
+        `;
+        const values = [visibility, id];
 
-})
+        await client.query(query, values);
+        client.release(); // Ensure the connection is released
+        res.status(200).json({ success: true, icon: 'success' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server Error' });
+    }
+});
+
 
 router.get('/iso', adminAuthMiddleware, async (req, res) => {
     try {
@@ -542,11 +541,20 @@ router.get('/privilege', adminAuthMiddleware, async (req, res) => {
 
 router.get('/search', adminAuthMiddleware, async (req, res) => {
     try {
-        // const client = await pool.poolUser.connect();
-        // const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE is_added=false');
+        const client = await pool.poolUser.connect();
+        const result = await client.query('SELECT *  FROM registered');
+        client.release();
+
+        const userItems = result.rows;
+
+        const imageBuffer = result.rows[0].id_proof;
+        result.rows[0].id_proof = imageBuffer.toString('base64');
+
         // client.release();
+        res.render('adminSearch', { userItems});
+
         // res.render('adminAddCatalog', { catalogItems: rows });
-        res.render('adminSearch');
+        // res.render('adminCatalogManage');
 
     } catch (err) {
         console.error(err);
