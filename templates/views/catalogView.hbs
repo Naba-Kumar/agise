@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     {{>head}}
-
-
 </head>
-
 <body>
 
 <nav class="navbar navbar-expand-lg bg-white navbar-light sticky-top p-0 wow fadeIn" data-wow-delay="0.1s">
     <div class=" " id="">
         <div class=" ">
-            <a href="/catalog" class="nav-item nav-link active"><span class="material-symbols-outlined">
-                    arrow_back
-                </span></a>
+            <a href="/catalog" class="nav-item nav-link active"><span class="material-symbols-outlined">arrow_back</span></a>
         </div>
     </div>
     <a href="index.html" class="navbar-brand d-flex align-items-center px-1 px-lg-1">
@@ -22,24 +16,24 @@
             <img src="/image/fav.png" alt="Icon" width="60" height="60" class="d-inline-block align-top">
         </a>
     </a>
-    <h4 class="m-0 text-black"> Assam GIS Explorer</h4>
+    <h4 class="m-0 text-black">Assam GIS Explorer</h4>
 </nav>
-    <!-- Service Start -->
-    <div class="container" id="mapcont">
-        <div class="text-center mx-auto mb-5 wow " style="max-width: 600px;">
-            <h1>Our GeoSapatial Data Catalog</h1>
-        </div>
-       <div id="map" class="container-fluid" style="height: 70vh; width:70vw;">
-       </div>
 
+<!-- Service Start -->
+<div class="container" id="mapcont">
+    <div class="text-center mx-auto mb-5 wow " style="max-width: 600px;">
+        <h1>Our GeoSpatial Data Catalog</h1>
     </div>
-    <!-- Service End -->
+    <div id="map" class="container-fluid" style="height: 70vh; width:70vw;"></div>
+</div>
+<!-- Service End -->
 
-    <script src="script.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/ol@v9.2.4/dist/ol.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-    {{#each catalogItems}}
+<script src="script.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/ol@v9.2.4/dist/ol.js"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+       {{#each catalogItems}}
+    console.log(`{{workspace}}:{{file_name}}`)
             const map = new ol.Map({
                 target: 'map',
                 layers: [
@@ -61,8 +55,7 @@
                 })
             });
             {{/each}}
-                });
-    </script>
+});
+</script>
 </body>
-
 </html>

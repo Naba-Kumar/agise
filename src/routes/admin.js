@@ -306,7 +306,11 @@ router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), a
 
 
     } catch (error) {
+
         console.error(`erryor: ${error}`)
+        const data = { message: 'Invalid zip format or Something went wrong', title: "Oops?", icon: "error" };
+                console.log(data)
+                return res.status(400).json(data);
     }
 
 });
@@ -366,15 +370,15 @@ router.post('/catalog', adminAuthMiddleware, login.single('id_proof'), async (re
                 name: file_name,
                 nativeName: file_name,
                 title: file_name,
-                srs: 'EPSG:4326',
-                attributes: {
-                    attribute: [
-                      { name: 'name', binding: 'java.lang.String' },
-                      { name: 'description', binding: 'java.lang.String' },
-                      { name: 'latitude', binding: 'java.lang.Double' },
-                      { name: 'longitude', binding: 'java.lang.Double' }
-                    ]
-                  }
+                srs: 'EPSG:4326'
+                // attributes: {
+                //     attribute: [
+                //       { name: 'name', binding: 'java.lang.String' },
+                //       { name: 'description', binding: 'java.lang.String' },
+                //       { name: 'latitude', binding: 'java.lang.Double' },
+                //       { name: 'longitude', binding: 'java.lang.Double' }
+                //     ]
+                //   }
             }
         }, {
             auth: {
@@ -427,7 +431,7 @@ router.post('/catalog', adminAuthMiddleware, login.single('id_proof'), async (re
             console.log("-------------------")
             client.release();
 
-            console.error('Error publishing to to GeoServer:', error);
+            // console.error('Error publishing to to GeoServer:', error);
             const data = { message: 'File Published to GeoServer', title: "Success", icon: "success" };
             console.log(data)
             return res.status(500).json(data);

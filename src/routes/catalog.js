@@ -38,11 +38,13 @@ router.get('/', async(req, res) => {
 
 router.get('/:id', async(req, res) => {
     const id = req.params.id;
+    console.log(id)
     // res.render("catalogView")
     try {
         const client = await pool.poolUser.connect();
-        const result = await client.query('SELECT * FROM catalog');
+        const result = await client.query(`SELECT * FROM catalog where file_name = $1`,[id]);
         const catalogItems = result.rows;
+        console.log(catalogItems)
 
         client.release();
         res.render('catalogView', { catalogItems});
@@ -55,7 +57,7 @@ router.get('/:id', async(req, res) => {
 
 
 router.post('/:id', userAuthMiddleware, async(req, res) => {
-    // const id = req.params.id;
+    const id = req.params.id;
     // res.render("catalogView")
     try {
         console.log(req.body)
