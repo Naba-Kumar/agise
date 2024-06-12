@@ -35,25 +35,24 @@
                         {{!-- <p class="mb-3 p-4">{{this.file_name}}</p> --}}
                         <p class="mb-4 p-4">{{this.description}}</p>
                         <div class="small">
-                           
                             <a class="btn btn-primary text-white py-1 px-0 col-lg-3" href="/catalog/{{this.file_name}}">View</a>
-                             {{#ifCond requestStatus '===' 'request'}}
+                             {{#ifCond requestStatus '==' 'request'}}
                                 {{!-- {{v1}} is equal to {{v2}} --}}
 
-                            <a class="btn btn-primary text-white py-1 px-0 col-lg-4" id="request-{{@index}}"> Request </a>
-                            <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink" href="">Download</a>
-                            {{else ifCond requestStatus '===' 'requested'}}
+                            <a class="btn btn-primary text-white py-1 px-0 col-lg-4" id="request-{{@index}}"> {{this.requestStatus}} </a>
+                            <a class="btn btn-primary text-white py-1 px-0 col-lg-4 inactiveLink" href="">Download</a>
+                            {{else ifCond requestStatus '==' 'requested'}}
                                 {{!-- {{v1}} is not equal to {{v3}} --}}
-                             <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}"> Requested </a>
+                             <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}"> {{this.requestStatus}} </a>
                             <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink" href="">Download</a>
-                            {{else ifCond requestStatus '===' 'approved'}}
+                            {{else ifCond requestStatus '==' 'approved'}}
                                 {{!-- {{v1}} is not equal to {{v3}} --}}
-                                 <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}"> Approved </a>
+                                 <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}"> {{this.requestStatus}} </a>
                             <a class="btn btn-success text-white py-1 px-0 col-lg-4 " href="">Download</a>
 
-                            {{else ifCond requestStatus '===' 'rejected'}}
+                            {{else ifCond requestStatus '==' 'rejected'}}
                                 {{!-- {{v1}} is not equal to {{v3}} --}}
-                                 <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}"> Rejected </a>
+                                 <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}"> {{this.requestStatus}} </a>
                             <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink" href="">Download</a>
                             {{/ifCond}}
 
@@ -98,12 +97,11 @@
             {{#each catalogItems}}
             document.getElementById('request-{{@index}}').addEventListener('click', function () {
                 const fileName = '{{this.file_name}}'; // Get the value dynamically
-console.log("hii")
+
                 // Make a POST request to your server
                 fetch('/catalog/{{this.file_name}}', {
                     method: 'POST',
                     headers: {
-                        {{!-- 'Authorization': `Bearer ${token}`, --}}
                         'Content-Type': 'application/json',
                         // Add any other headers you need (e.g., authorization)
                     },

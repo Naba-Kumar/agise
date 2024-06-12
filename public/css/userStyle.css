@@ -22,7 +22,10 @@ body {
 }
 
 
-
+.inactiveLink {
+    pointer-events: none;
+    cursor: default;
+}
 
 
 .hero {

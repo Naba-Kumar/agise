@@ -520,7 +520,7 @@ router.post('/login', upload.single('id_proof'), async (req, res) => {
             res.cookie('token', token, { httpOnly: true, secure: process.env.NODE_ENV === 'production' })
             // console.log("Login successful")
             // return res.json({ message: 'Login successful', token });
-            const data = { message: 'Login successful', title: "Sent", icon: "success" };
+            const data = { message: 'Login successful', title: "Sent", icon: "success", redirect: "/" };
             res.status(200).json(data);
 
             // Redirect to another route (e.g., the homepage)

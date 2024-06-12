@@ -28,13 +28,13 @@ const userAuthMiddleware = (req, res, next) => {
   if (!token) {
     console.log("Token not found. Redirecting to login.");
     // return res.redirect('/admin');
-    const data = { message: 'Login First!!', title: "Oops?", icon: "danger" , redirect:"/admin" };
+    const data = { message: 'Login First!!', title: "Oops?", icon: "warning"  };
             console.log(data)
             return res.status(500).json(data);
   }
 
   if (decodedToken.exp < currentTime) {
-    const data = { message: 'Login First1!!', title: "Oops?", icon: "danger" , redirect:"/admin" };
+    const data = { message: 'Session Expired Login Again!', title: "Oops?", icon: "warning"  };
     console.log(data)
     return res.status(500).json(data);  }
 

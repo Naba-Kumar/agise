@@ -63,9 +63,10 @@ async function createTables() {
 
       CREATE TABLE IF NOT EXISTS requests (
         requestno SERIAL PRIMARY KEY,
-        userid INT,
-        filename  VARCHAR(255) NOT NULL,
-        status BOOLEAN
+        email VARCHAR(255),
+        file_name  VARCHAR(255) NOT NULL,
+        is_checked BOOLEAN NOT NULL,
+        request_status BOOLEAN NOT NULL
       ); 
 
       CREATE TABLE IF NOT EXISTS emailotp (

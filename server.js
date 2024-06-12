@@ -26,10 +26,29 @@ console.log(viewpath)
 // app.use(express.static('public'));
 app.use(express.static(__dirname + '/public'));
 
+const jwtMiddleware = (req, res, next) => {
+    const token = req.headers['authorization'] && req.headers['authorization'].split(' ')[1];
+    if (token) {
+        jwt.verify(token, secret, (err, decoded) => {
+            if (err) {
+                return res.status(401).send('Unauthorized');
+            }
+            req.user = decoded;
+            next();
+        });
+    } else {
+        next();
+    }
+};
+
+app.use(jwtMiddleware);
+
 
 app.set("view engine", "hbs")
 app.set("views", viewpath);
 hbs.registerPartials(partialpath);
+
+
 hbs.registerHelper('ifCond', function (v1, operator, v2, options) {
   switch (operator) {
       case '==':
