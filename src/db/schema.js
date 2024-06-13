@@ -51,7 +51,7 @@ async function createTables() {
 
       CREATE TABLE IF NOT EXISTS catalog (
         sn SERIAL PRIMARY KEY,
-        file_name VARCHAR(200) NOT NULL,
+        file_name VARCHAR(200) UNIQUE NOT NULL,
         file_id VARCHAR(10) NOT NULL,
         workspace VARCHAR(200) NOT NULL,
         store VARCHAR(300) NOT NULL,
@@ -66,7 +66,8 @@ async function createTables() {
         email VARCHAR(255),
         file_name  VARCHAR(255) NOT NULL,
         is_checked BOOLEAN NOT NULL,
-        request_status BOOLEAN NOT NULL
+        request_status BOOLEAN NOT NULL,
+        is_isolated BOOLEAN NOT NULL
       ); 
 
       CREATE TABLE IF NOT EXISTS emailotp (

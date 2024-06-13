@@ -26,42 +26,73 @@
             <div class="text-center mx-auto mb-5 wow" style="max-width: 600px;">
                 <h1>Our Geospatial Data Catalog</h1>
             </div>
-            <div class="row g-3">
-                {{#each catalogItems}}
-                <div class="col-lg-3 col-md-6 wow">
-                    <div class="bg-light rounded h-100 p-1">
-                        <div id="map-{{@index}}" class="map" style="height: 200px; width: 100%;"></div>
-                        <h4 class="mb-3 p-4">{{this.title}}</h4>
-                        {{!-- <p class="mb-3 p-4">{{this.file_name}}</p> --}}
-                        <p class="mb-4 p-4">{{this.description}}</p>
-                        <div class="small">
-                           
-                            <a class="btn btn-primary text-white py-1 px-0 col-lg-3" href="/catalog/{{this.file_name}}">View</a>
-                             {{#ifCond requestStatus '===' 'request'}}
-                                {{!-- {{v1}} is equal to {{v2}} --}}
+               <section class="wrapper">
+        <div class="container-fostrap">
 
-                            <a class="btn btn-primary text-white py-1 px-0 col-lg-4" id="request-{{@index}}"> Request </a>
-                            <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink" href="">Download</a>
-                            {{else ifCond requestStatus '===' 'requested'}}
-                                {{!-- {{v1}} is not equal to {{v3}} --}}
-                             <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}"> Requested </a>
-                            <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink" href="">Download</a>
-                            {{else ifCond requestStatus '===' 'approved'}}
-                                {{!-- {{v1}} is not equal to {{v3}} --}}
-                                 <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}"> Approved </a>
-                            <a class="btn btn-success text-white py-1 px-0 col-lg-4 " href="">Download</a>
+            <div class="container-lg">
+                <div class="row">
+                            {{#each catalogItems}}
 
-                            {{else ifCond requestStatus '===' 'rejected'}}
-                                {{!-- {{v1}} is not equal to {{v3}} --}}
-                                 <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}"> Rejected </a>
-                            <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink" href="">Download</a>
-                            {{/ifCond}}
+                    <div class="col-xs-12 col-sm-3 mb-4">
+                        <div class="card">
+                            <a class="map-card">
+                                <div id="map-{{@index}}" class="map" style="height: 200px; width: 100%;"></div>
+                            </a>
+                            <div class="card-content">
+                                <p class="catalog-card-title">
+                                    <a>{{this.title}}
+                                    </a>
+                                </p>
+                                <p class="catalog-card-desc">
+                                    {{this.description}}
+                                </p>
+                            </div>
+                            <div class="catalog-card-buttons">
+                                <div class="bg-light rounded h-100 p-1">
+                                    {{!-- <p class="mb-3 p-4">{{this.file_name}}</p> --}}
+                                    <div id="btn-txt-catalog" class="small">
 
+                                        <a class="btn btn-primary text-white py-1 px-0 col-lg-3"
+                                            href="/catalog/{{this.file_name}}">View</a>
+                                        {{#ifCond requestStatus '===' 'request'}}
+                                        {{!-- {{v1}} is equal to {{v2}} --}}
+
+                                        <a class="btn btn-primary text-white py-1 px-0 col-lg-4"
+                                            id="request-{{@index}}"> Request </a>
+                                        <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink"
+                                            href="">Download</a>
+                                        {{else ifCond requestStatus '===' 'requested'}}
+                                        {{!-- {{v1}} is not equal to {{v3}} --}}
+                                        <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink"
+                                            id="request-{{@index}}"> Requested </a>
+                                        <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink"
+                                            href="">Download</a>
+                                        {{else ifCond requestStatus '===' 'approved'}}
+                                        {{!-- {{v1}} is not equal to {{v3}} --}}
+                                        <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink"
+                                            id="request-{{@index}}"> Approved </a>
+                                        <a class="btn btn-success text-white py-1 px-0 col-lg-4 " href="">Download</a>
+
+                                        {{else ifCond requestStatus '===' 'rejected'}}
+                                        {{!-- {{v1}} is not equal to {{v3}} --}}
+                                        <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink"
+                                            id="request-{{@index}}"> Rejected </a>
+                                        <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink"
+                                            href="">Download</a>
+                                        {{/ifCond}}
+
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
+
+
+                            {{/each}}
                 </div>
-                {{/each}}
             </div>
+        </div>
+    </section>
         </div>
     </div>
     <!-- Service End -->
@@ -98,7 +129,7 @@
             {{#each catalogItems}}
             document.getElementById('request-{{@index}}').addEventListener('click', function () {
                 const fileName = '{{this.file_name}}'; // Get the value dynamically
-console.log("hii")
+                console.log("hii")
                 // Make a POST request to your server
                 fetch('/catalog/{{this.file_name}}', {
                     method: 'POST',
@@ -111,8 +142,10 @@ console.log("hii")
                 })
                 .then(response => response.json())
                 .then(data => {
+                    
                     console.log('Response data:', data);
                     if (data) {
+                        console.log(data.message)
                         Swal.fire({
                             title: data.title,
                             text: data.message,
@@ -120,9 +153,9 @@ console.log("hii")
                             icon: data.icon
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                if (data.redirect != undefined) {
-                                    window.location.href = data.redirect; // Replace with your desired URL
-                                }
+                                {{!-- if (data.redirect != undefined) { --}}
+                                    window.location.reload(); // Replace with your desired URL
+                                {{!-- } --}}
                             }
                         });
                     } else {

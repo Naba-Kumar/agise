@@ -117,12 +117,35 @@ router.post('/home', adminAuthMiddleware, (req, res) => {
 });
 
 
-router.get('/requests', adminAuthMiddleware, (req, res) => {
+router.get('/requests', adminAuthMiddleware, async(req, res) => {
     // Your OpenLayers logic here
+    try {
+        
+        const client = await pool.poolUser.connect();
+        const  result  = await client.query('SELECT * FROM requests WHERE is_isolated=$1',[false]);
+        const requestItems = result.rows;
+    
+        client.release();
+        res.render('adminFileRequests', { requestItems});
+    } catch (error) {
+        
+    }
+    
+
+});
+
+router.post('/requests', adminAuthMiddleware, (req, res) => {
+    // Your OpenLayers logic here
+    // res.render("adminRequests");
+
+});
+
+router.get('/isolated', adminAuthMiddleware, (req, res) => {
     res.render("adminFileRequests");
 
 });
-router.post('/requests', adminAuthMiddleware, (req, res) => {
+
+router.post('/isolated', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
     // res.render("adminRequests");
 
@@ -238,70 +261,6 @@ router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), a
             }
 
 
-            const data = { message: 'Shapefile uploaded successfully', title: "uploaded", icon: "success", redirect: '\\admin\\upload' };
-            console.log(data)
-            return res.status(400).json(data);
-
-            // Publish table to GeoServer
-            // const workspace = 'catalog';
-            // const dataStore = 'catalog';
-
-            const table_name1 = 'assam_natural'
-
-            console.log(req.body)
-            console.log(req.body)
-
-            axios.post(`http://localhost:8080/geoserver/rest/workspaces/${workspace}/datastores/${data_store}/featuretypes`, {
-                featureType: {
-                    name: table_name,
-                    nativeName: table_name,
-                    title: table_name,
-                    srs: 'EPSG:4326'
-                }
-            }, {
-                auth: {
-                    username: 'admin',
-                    password: 'geoserver'
-                }
-            }).then(async response => {
-                // res.send('Shapefile uploaded and published successfully');
-                console.log('--------------------------------------')
-
-                // console.log(`http://localhost:8080/geoserver/rest/workspaces/${workspace}/datastores/${dataStore}/featuretypes`)
-
-                const query = `
-                INSERT INTO shapefile_track ( file_name, workspace, dataStore, public)
-                VALUES ($1, $2, $3, $4)
-                    `;
-
-                const public = false;
-                const values = [
-                    table_name,
-                    workspace,
-                    data_store,
-                    public
-                ];
-
-                try {
-                    const client = await pool.poolUser.connect();
-
-                    await client.query(query, values);
-                    client.release();
-                    console.log('Shapefile uploaded and published successfully');
-                } catch (dbError) {
-                    console.error('Error executing database query:', dbError);
-                    res.status(500).send('Error executing database query');
-                }
-
-                console.log('Shapefile uploaded and published successfully')
-                const data = { message: 'Shapefile uploaded and pulished successfully', title: "uploaded", icon: "success", redirect: '\\admin\\upload' };
-                console.log(data)
-                return res.status(400).json(data);
-
-            }).catch(error => {
-                console.error('Error publishing to GeoServer:', error);
-                res.status(500).send('Error publishing to GeoServer');
-            });
         })
 
 
@@ -515,7 +474,21 @@ router.put('/manage', adminAuthMiddleware, async (req, res) => {
 });
 
 
-router.get('/iso', adminAuthMiddleware, async (req, res) => {
+router.get('/isolated', adminAuthMiddleware, async (req, res) => {
+    try {
+        // const client = await pool.poolUser.connect();
+        // const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE is_added=false');
+        // client.release();
+        // res.render('adminAddCatalog', { catalogItems: rows });
+        res.render('adminFileRequestsISo');
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
+});
+
+router.get('/isolated', adminAuthMiddleware, async (req, res) => {
     try {
         // const client = await pool.poolUser.connect();
         // const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE is_added=false');

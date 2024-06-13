@@ -85,6 +85,11 @@ router.get('/', async (req, res) => {
 
         const token = req.cookies.token;
 
+        // Set default requestStatus for all catalog items
+        catalogItems.forEach(item => {
+            item.requestStatus = 'request';
+        });
+
         function parseJwt(token) {
             try {
                 return JSON.parse(Buffer.from(token.split('.')[1], 'base64').toString());
@@ -100,6 +105,8 @@ router.get('/', async (req, res) => {
 
         const decodedToken = parseJwt(token);
         const currentTime = Math.floor(Date.now() / 1000);
+
+        
 
         if (!decodedToken || decodedToken.exp < currentTime) {
             client.release();
@@ -186,8 +193,10 @@ router.post('/:id', userAuthMiddleware, async (req, res) => {
         }
         const is_checked = false;
         const request_status = false;
+        const is_isolated = false;
 
-        await client.query(`INSERT INTO requests (email, file_name, is_checked, request_status) VALUES ($1, $2, $3, $4)`, [email, file_name, is_checked, request_status]);
+
+        await client.query(`INSERT INTO requests (email, file_name, is_checked, request_status, is_isolated) VALUES ($1, $2, $3, $4, $5)`, [email, file_name, is_checked, request_status, is_isolated]);
 
         const data = { message: 'File requested!', title: "success", icon: "success" };
         return res.status(400).json(data);

@@ -81,6 +81,7 @@
 
                     {{!-- <div class="container"> --}}
                         <div class="card-group vgr-cards">
+                            {{#each requestItems}}
                             <div class="card">
                                 <div class="card-img-body">
                                     <img class="card-img" src="https://picsum.photos/500/230" alt="Card image cap">
@@ -115,7 +116,7 @@
                                         </div>
                                         <div class="row ">
                                             <div class="col-md-6 mb-2">
-                                                <p class="card-text">File Title : {{this.mobile}}</p>
+                                                <p class="card-text">File Title : {{this.file_name}}</p>
                                             </div>
                                         </div>
 
@@ -128,6 +129,7 @@
                                     </div>
                                 </div>
                             </div>
+                            {{/each}}
                         </div>
                         {{!--
                     </div> --}}

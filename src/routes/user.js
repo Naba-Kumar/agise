@@ -510,7 +510,7 @@ router.post('/login', upload.single('id_proof'), async (req, res) => {
             }
             console.log("4")
 
-            const token = await jwt.sign({ email: user.rows[0].email }, process.env.secretKey, { expiresIn: '1h' });
+            const token = await jwt.sign({ email: user.rows[0].email }, process.env.secretKey, { expiresIn: '24h' });
 
             console.log("token")
 
@@ -732,6 +732,13 @@ router.post('/forgot', upload.single('id_proof'), async (req, res) => {
 
 
   
+});
+
+router.get('/a', (req, res) => {
+    // Your OpenLayers logic here
+    res.render("test");
+    // res.render("404")
+
 });
 
 router.get('*', (req, res) => {
