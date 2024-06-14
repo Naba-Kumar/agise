@@ -120,13 +120,47 @@ router.post('/home', adminAuthMiddleware, (req, res) => {
 router.get('/requests', adminAuthMiddleware, async(req, res) => {
     // Your OpenLayers logic here
     try {
+        console.log("combinedData")
+
         
         const client = await pool.poolUser.connect();
-        const  result  = await client.query('SELECT * FROM requests WHERE is_isolated=$1',[false]);
-        const requestItems = result.rows;
+        const  reqresult  = await client.query('SELECT * FROM requests WHERE is_isolated=$1',[false]);
+        const reqResultItems = reqresult.rows;
+
+        const  userresult  = await client.query('SELECT * FROM registered');
+        const  userResultItems = userresult.rows;
+
+
+         // Combine data from both tables based on the 'email' field
+         console.log("combinedData")
+
+        //  const combinedData = reqResultItems.map(request => {
+        //     const match = userResultItems.find(item => item.email === request.email);
+        //     return {
+        //         first_name: match ? match.first_name : null,
+        //         last_name: match ? match.last_name : null,
+        //         email: request.email,
+        //         organization: match ? match.organization : null,
+        //         designation: match ? match.designation : null,
+        //         file_name: request.file_name
+        //     };
+        // });
+
+        const combinedData = reqResultItems.map(request => {
+            const match = userResultItems.find(item => item.email === request.email);
+            return {
+                first_name: match ? match.first_name : null,
+                last_name: match ? match.last_name : null,
+                email: request.email,
+                organization: match ? match.organization : null,
+                designation: match ? match.designation : null,
+                file_name: request.file_name
+            };
+        });
+        console.log(combinedData)
     
         client.release();
-        res.render('adminFileRequests', { requestItems});
+        res.render('adminFileRequests', { combinedData});
     } catch (error) {
         
     }
@@ -134,10 +168,32 @@ router.get('/requests', adminAuthMiddleware, async(req, res) => {
 
 });
 
-router.post('/requests', adminAuthMiddleware, (req, res) => {
+router.post('/requests', adminAuthMiddleware, async(req, res) => {
     // Your OpenLayers logic here
     // res.render("adminRequests");
+    console.log(req.body)
+    // return res.send("ok")
+    const {action, email, file_name } = req.body;
 
+    if(action === 'approve'){
+        const client = await pool.poolUser.connect();
+
+        const approveQuery = `
+        UPDATE requests
+        SET is_checked=$1, request_status=$2 
+        WHERE email=$3 AND file_name=$4
+         `;
+         
+        const request_table_update = [true, true, email, file_name ]
+
+        await client.query(approveQuery, request_table_update);
+
+    }else if(action === 'reject'){
+
+    }else if(action === 'isolate'){
+
+    }
+    
 });
 
 router.get('/isolated', adminAuthMiddleware, (req, res) => {
