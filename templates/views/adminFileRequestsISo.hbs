@@ -14,134 +14,143 @@
         </nav>
         <main class="content px-3 py-2">
             <div class="container-fluid">
-
-                <!-- Table Element -->
                 <form action="#" method="post" class="card-body">
-                <div class="input-group mb-3">
-                    <input type="search" class="form-control " placeholder="Search" aria-label="Search"
-                        aria-describedby="search-addon" />
-                    <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
-                </div>
-                    {{!-- {{#each queries}} --}}
-
-                    {{!-- Query No:- {{this.queryid}} --}}
-                    {{!-- <div class="card p-2">
-
-
-
-                        <div class="row  ">
-                            <div class="col-md-6 mb-2">
-                                <p class="card-text">Name : {{this.full_name}}</p>
-                            </div>
-
-                        </div>
-                        <div class="row ">
-                            <div class="col-md-6 mb-2">
-                                <p class="card-text">Email : {{this.email}}</p>
-                            </div>
-                        </div>
-
-                        <div class="row ">
-                            <div class="col-md-6 mb-2">
-                                <p class="card-text">Organization : {{this.mobile}}</p>
-                            </div>
-                        </div>
-                        <div class="row ">
-                            <div class="col-md-6 mb-2">
-                                <p class="card-text">Designation : {{this.mobile}}</p>
-                            </div>
-                        </div>
-                        <div class="row ">
-                            <div class="col-md-6 mb-2">
-                                <p class="card-text">File Title : {{this.mobile}}</p>
-                            </div>
-                        </div>
-
-
-
-
-
-
-                        <div class="row mt-3">
-
-                            <div class="col-md-6">
-
-                                <div class="form-group last mb-1">
-                                    <input type="submit" value="Ignor" class="btn px-5 btn-primary mt-2">
-                                    <input type="submit" value="Send Email" class="btn px-5 btn-primary mt-2">
-                                </div>
-                            </div>
-
-                        </div>
-
-
-
-
-                    </div> --}}
-
-                    {{!-- <div class="container"> --}}
-                        <div class="card-group vgr-cards">
-                            <div class="card">
-                                <div class="card-img-body">
-                                    <img class="card-img" src="https://picsum.photos/500/230" alt="Card image cap">
-                                </div>
-                                <div class="card">
-                                    <div class="card-img-body">
-                                        <img class="card-img" src="https://picsum.photos/450/250" alt="Card image cap">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h4 class="card-title">Card title</h4>
-                                        <div class="row  ">
-                                            <div class="col-md-6 mb-2">
-                                                <p class="card-text">Name : {{this.full_name}}</p>
-                                            </div>
-
-                                        </div>
-                                        <div class="row ">
-                                            <div class="col-md-6 mb-2">
-                                                <p class="card-text">Email : {{this.email}}</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="row ">
-                                            <div class="col-md-6 mb-2">
-                                                <p class="card-text">Organization : {{this.mobile}}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row ">
-                                            <div class="col-md-6 mb-2">
-                                                <p class="card-text">Designation : {{this.mobile}}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row ">
-                                            <div class="col-md-6 mb-2">
-                                                <p class="card-text">File Title : {{this.mobile}}</p>
-                                            </div>
-                                        </div>
-
-                                        {{!-- <a href="#" class="btn btn-outline-primary">Primary</a> --}}
-                                        <input type="submit" value="Approve" class="btn px-4 btn-primary mt-2">
-                                        <input type="submit" value="Reject" class="btn px-4 btn-primary mt-2">
-                                        <input type="submit" value="Isolate" class="btn px-4 btn-primary mt-2">
-
-
+                    <div class="input-group mb-3">
+                        <input type="search" class="form-control" placeholder="Search" aria-label="Search"
+                            aria-describedby="search-addon" />
+                        <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>Search</button>
+                    </div>
+                    <div class="card-group vgr-cards" id="card-container">
+                        {{#each combinedData}}
+                        <div class="card" id="card-{{this.email}}-{{this.file_name}}">
+                            <div class="card-body p-1">
+                                <h4 class="card-title">Card title</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p class="card-text">Name: {{this.first_name}}</p>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p class="card-text">Email: {{this.email}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p class="card-text">Organization: {{this.organization}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p class="card-text">Designation: {{this.designation}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p class="card-text">File Title: {{this.file_name}}</p>
+                                    </div>
+                                </div>
+                                <input type="button" value="Approve" class="btn px-4 btn-primary mt-2"
+                                    data-action="approve" data-email="{{this.email}}" data-file="{{this.file_name}}">
+                                <input type="button" value="Reject" class="btn px-4 btn-primary mt-2"
+                                    data-action="reject" data-email="{{this.email}}" data-file="{{this.file_name}}">
+                            </div>
+                            <div class="card-img-body" data-bs-toggle="modal" data-bs-target="#requestModal">
+                                {{#if this.id_proof}}
+                                <img src="data:image/png;base64,{{this.id_proof}}" alt="User ID Proof"
+                                    style="width: 100%; cursor: pointer;" class="img-thumbnail" data-toggle="modal"
+                                    data-target="#imageModal" data-src="data:image/png;base64,{{this.id_proof}}">
+                                {{else}}
+                                <p>No ID Proof available</p>
+                                {{/if}}
                             </div>
                         </div>
-                        {{!--
-                    </div> --}}
-                    {{!-- {{/each}} --}}
-
-
+                        {{/each}}
+                    </div>
                 </form>
-
             </div>
         </main>
-
-
     </div>
 </div>
 
-<!-- Card Start -->
+<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-body" id="requestIdModal">
+                <img id="modalImage" src="" class="img-fluid" alt="Zoomed Image">
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@4.4.0/dist/panzoom.min.js"></script>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const actionButtons = document.querySelectorAll('.btn-primary');
+
+    actionButtons.forEach(button => {
+        button.addEventListener('click', async (event) => {
+            const action = event.target.getAttribute('data-action');
+            const email = event.target.getAttribute('data-email');
+            const file_name = event.target.getAttribute('data-file');
+            const card = document.getElementById(`card-${email}-${file_name}`);
+            
+            console.log('Button clicked:', { action, email, file_name });
+            console.log('Card element:', card);
+
+            if (!card) {
+                console.error(`Card element not found for email: ${email} and file_name: ${file_name}`);
+                return;
+            }
+
+            try {
+                const response = await fetch('/admin/requests', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ action, email, file_name }),
+                });
+
+                const data = await response.json();
+                console.log('Response data:', data);
+
+                if (data) {
+                    Swal.fire({
+                        title: data.title,
+                        text: `Action ${action} for ${email} was successful!`,
+                        icon: data.icon
+                    }).then((result) => {
+                        console.log('SweetAlert2 then block executed, result:', result);
+                        if (result.isConfirmed) {
+                            console.log('Removing card:', card);
+                            card.remove();
+                        }
+                    });
+                } else {
+                    console.error('Unexpected response format:', data);
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'Unexpected response format.',
+                        icon: 'error'
+                    });
+                }
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: `There was a problem performing the action ${action} for ${email}.`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+});
+
+</script>
 {{>footer}}

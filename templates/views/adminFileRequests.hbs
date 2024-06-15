@@ -14,132 +14,161 @@
         </nav>
         <main class="content px-3 py-2">
             <div class="container-fluid">
-
-                <!-- Table Element -->
                 <form action="#" method="post" class="card-body">
-                <div class="input-group mb-3">
-                    <input type="search" class="form-control " placeholder="Search" aria-label="Search"
-                        aria-describedby="search-addon" />
-                    <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
-                </div>
-                        <div class="card-group vgr-cards">
-                            {{#each combinedData}}
-                            <div class="card">
-                                <div class="card-img-body">
-                                    <img class="card-img" src="https://picsum.photos/500/230" alt="Card image cap">
-                                </div>
-                                <div class="card">
-                                    <div class="card-img-body">
-                                        <img class="card-img" src="https://picsum.photos/450/250" alt="Card image cap">
-                                    </div>
-                                    <div class="card-body p-1">
-                                        <h4 class="card-title">Card title</h4>
-                                        <div class="row  ">
-                                            <div class="col-md-6 mb-2">
-                                                <p class="card-text">Name : {{this.first_name}}</p>
-                                            </div>
-
-                                        </div>
-                                        <div class="row ">
-                                            <div class="col-md-6 mb-2">
-                                                <p class="card-text">Email : {{this.email}}</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="row ">
-                                            <div class="col-md-6 mb-2">
-                                                <p class="card-text">Organization : {{this.organization}}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row ">
-                                            <div class="col-md-6 mb-2">
-                                                <p class="card-text">Designation : {{this.designation}}</p>
-                                            </div>
-                                        </div>
-                                        <div class="row ">
-                                            <div class="col-md-6 mb-2">
-                                                <p class="card-text">File Title : {{this.file_name}}</p>
-                                            </div>
-                                        </div>
-
-                                        {{!-- <a href="#" class="btn btn-outline-primary">Primary</a> --}}
-                                        <input type="submit" value="Approve" class="btn px-4 btn-primary mt-2"  data-action="approve" data-email="{{this.email}}" data-file="{{this.file_name}}">
-                                        <input type="submit" value="Reject" class="btn px-4 btn-primary mt-2"  data-action="reject" data-email="{{this.email}}"  data-file="{{this.file_name}}">
-                                        <input type="submit" value="Isolate" class="btn px-4 btn-primary mt-2"  data-action="isolate" data-email="{{this.email}}"  data-file="{{this.file_name}}">
-
-
+                    <div class="input-group mb-3">
+                        <input type="search" class="form-control" placeholder="Search" aria-label="Search"
+                            aria-describedby="search-addon" />
+                        <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>Search</button>
+                    </div>
+                    <div class="card-group vgr-cards" id="card-container-{{@index}}">
+                        {{#each combinedData}}
+                        <div class="card">
+                            <div class="card-body p-1">
+                                <h4 class="card-title">Card title</h4>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p class="card-text">Name: {{this.first_name}}</p>
                                     </div>
                                 </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p class="card-text">Email: {{this.email}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p class="card-text">Organization: {{this.organization}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p class="card-text">Designation: {{this.designation}}</p>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-6 mb-2">
+                                        <p class="card-text">File Title: {{this.file_name}}</p>
+                                    </div>
+                                </div>
+                                <input type="button" value="Approve" class="btn px-4 btn-primary mt-2"
+                                    data-action="approve" data-email="{{this.email}}" data-file="{{this.file_name}}">
+                                <input type="button" value="Reject" class="btn px-4 btn-primary mt-2"
+                                    data-action="reject" data-email="{{this.email}}" data-file="{{this.file_name}}">
+                                <input type="button" value="Isolate" class="btn px-4 btn-primary mt-2"
+                                    data-action="isolate" data-email="{{this.email}}" data-file="{{this.file_name}}">
                             </div>
-                            {{/each}}
+                            <div class="card-img-body"  data-bs-toggle="modal" data-bs-target="#requestModal">
+                                {{#if this.id_proof}}
+                                <img src="data:image/png;base64,{{this.id_proof}}" alt="User ID Proof" style="width: 100%; cursor: pointer;" class="img-thumbnail" data-toggle="modal" data-target="#imageModal" data-src="data:image/png;base64,{{this.id_proof}}">
+                                {{else}}
+                                <p>No ID Proof available</p>
+                                {{/if}}
+                            </div>
                         </div>
-                        {{!--
-                    </div> --}}
-                    {{!-- {{/each}} --}}
-
-
+                        {{/each}}
+                    </div>
                 </form>
-
             </div>
         </main>
-
-
     </div>
 </div>
 
-<!-- Card Start -->
+{{!-- <!-- Image Modal -->
+class="modal fade" id="exampleModalLong" tabindex="-1"
+                                aria-labelledby="exampleModalLongTitle" aria-hidden="true"
+                                <button type="button" class="btn " data-bs-toggle="modal"
+                                        data-bs-target="#exampleModalLong"><span
+                                            class="material-symbols-outlined">visibility</span></button> --}}
+<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content" >
+            <div class="modal-body" id="requestIdModal">
+                <img id="modalImage" src="" class="img-fluid" alt="Zoomed Image">
+            </div>
+        </div>
+    </div>
+</div>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@4.4.0/dist/panzoom.min.js"></script>
 
 <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const actionButtons = document.querySelectorAll('.btn-primary');
+        const images = document.querySelectorAll('.card-img-body img');
 
-  document.addEventListener('DOMContentLoaded', () => {
-    const actionButtons = document.querySelectorAll('.btn-primary');
-
-    actionButtons.forEach(button => {
-        button.addEventListener('click', async (event) => {
-            const action = event.target.getAttribute('data-action');
-            const email = event.target.getAttribute('data-email');
-            const file_name = event.target.getAttribute('data-file');
-
-
-            try {
-                const response = await fetch('/admin/requests', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ action, email, file_name }),
+        images.forEach(image => {
+            image.addEventListener('click', (event) => {
+                const src = event.target.getAttribute('data-src');
+                const modalImage = document.getElementById('modalImage');
+                modalImage.src = src;
+                
+                // Initialize Panzoom
+                Panzoom(modalImage, {
+                    maxScale: 5,
+                    contain: 'inside'
                 });
+            });
+        });
 
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
+        actionButtons.forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const action = event.target.getAttribute('data-action');
+                const email = event.target.getAttribute('data-email');
+                const file_name = event.target.getAttribute('data-file');
+                const card = document.getElementById(`card-container-{{@index}}`);
+
+
+                try {
+                    const response = await fetch('/admin/requests', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ action, email, file_name }),
+                    }) .then(response => response.json())
+                .then(data => {
+                    
+                    console.log('Response data:', data);
+                    if (data) {
+                        console.log(data.message)
+                        Swal.fire({
+                            title: data.title,
+                            text: data.message,
+                            confirmButtonText: "OK",
+                            icon: data.icon
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                console.log("ll")
+                                card.remove();  // Ensure this line correctly identifies and removes the card element
+                                if (data.redirect != undefined) {
+                                    window.location.reload(); // Replace with your desired URL
+                                }
+                            }
+                        });
+                    } else {
+                        console.error('Unexpected response format:', data);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Unexpected response format.',
+                            icon: 'error'
+                        });
+                    }
+                })
+
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+
+                    // Show error alert using SweetAlert
+                    Swal.fire({
+                        title: 'Error!',
+                        text: `There was a problem performing the action ${action} for ${email}.`,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
                 }
-
-                const result = await response.json();
-                console.log(result);
-
-                // Show success alert using SweetAlert
-                Swal.fire({
-                    title: 'Success!',
-                    text: `Action ${action} for ${email} was successful!`,
-                    icon: 'success',
-                    confirmButtonText: 'OK'
-                });
-
-            } catch (error) {
-                console.error('There was a problem with the fetch operation:', error);
-
-                // Show error alert using SweetAlert
-                Swal.fire({
-                    title: 'Error!',
-                    text: `There was a problem performing the action ${action} for ${email}.`,
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
+            });
         });
     });
-});
-
-
 </script>
 {{>footer}}
+

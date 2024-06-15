@@ -1,134 +1,6 @@
 {{>adminhead}}
 <div class="wrapper">
     {{>sidebar}}
-    {{#each userItems}}
-
-    <div class="modal fade" id="exampleModalLong" tabindex="-1" aria-labelledby="exampleModalLongTitle"
-        aria-hidden="true">
-        <div class="modal-dialog" id="profile-window">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">User details</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <section style="background-color: #eee;" class="col-lg-12 d-flex">
-                        <div class="container py-5">
-                            <div class="row"></div>
-                            <div class="row">
-                                <div class="col-lg-6">
-                                    <div class="card mb-4">
-                                        <div class="card-body text-center">
-                                            <img src="data:image/png;base64,{{this.id_proof}}" alt="User ID Proof"
-                                                style="max-width: 450px; ">
-
-                                        </div>
-                                    </div>
-                                    <div class="card mb-4 mb-lg-0">
-                                        <div class="card-body p-0">
-                                            <ul class="list-group list-group-flush rounded-3">
-                                                <h3 class="text-center m-5">About</h3>
-                                                <p class="m-3">{{this.about}}</p>
-                                            </ul>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6">
-                                    <div class="card mb-4">
-                                        <div class="card-body">
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <p class="mb-0">First Name</p>
-                                                </div>
-                                                <div class="col-sm-9">
-                                                    <p class="text-muted mb-0">{{this.first_name}}</p>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <p class="mb-0">Last Name</p>
-                                                </div>
-                                                <div class="col-sm-9">
-                                                    <p class="text-muted mb-0">{{this.last_name}}</p>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <p class="mb-0">Email</p>
-                                                </div>
-                                                <div class="col-sm-9">
-                                                    <p class="text-muted mb-0">{{this.email}}</p>
-                                                </div>
-                                            </div>
-                                            <hr>
-                                            <div class="row">
-                                                <div class="col-sm-3">
-                                                    <p class="mb-0">Phone</p>
-                                                </div>
-                                                <div class="col-sm-9">
-                                                    <p class="text-muted mb-0">{{this.mobile}}</p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="row">
-                                        <div class="col-lg-12">
-                                            <div class="card mb-4">
-                                                <div class="card-body">
-                                                    <div class="row">
-                                                        <div class="col-sm-3">
-                                                            <p class="mb-0">Organization</p>
-                                                        </div>
-                                                        <div class="col-sm-9">
-                                                            <p class="text-muted mb-0">{{this.organization}}</p>
-                                                        </div>
-                                                    </div>
-                                                    <hr>
-                                                    <div class="row">
-                                                        <div class="col-sm-3">
-                                                            <p class="mb-0">Department</p>
-                                                        </div>
-                                                        <div class="col-sm-9">
-                                                            <p class="text-muted mb-0">{{this.department}}</p>
-                                                        </div>
-                                                    </div>
-                                                    <hr>
-                                                    <div class="row">
-                                                        <div class="col-sm-3">
-                                                            <p class="mb-0">Designation</p>
-                                                        </div>
-                                                        <div class="col-sm-9">
-                                                            <p class="text-muted mb-0">{{this.designation}}</p>
-                                                        </div>
-                                                    </div>
-                                                    <hr>
-
-                                                    <div class="row">
-                                                        <div class="col-sm-3">
-                                                            <p class="mb-0">User Type</p>
-                                                        </div>
-                                                        <div class="col-sm-9">
-                                                            <p class="text-muted mb-0">{{this.user_type}}</p>
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </div>
-
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    </section>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
 
 
 
@@ -143,6 +15,7 @@
                 </div>
             </div>
         </nav>
+
         <main class="content px-3 py-2">
             <div class="input-group mb-3">
                 <input type="search" class="form-control " placeholder="Search" aria-label="Search"
@@ -174,6 +47,144 @@
                             </tr>
                         </thead>
                         <tbody>
+                            {{#each userItems}}
+
+                            <div class="modal fade" id="exampleModalLong" tabindex="-1"
+                                aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                                <div class="modal-dialog" id="profile-window">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLongTitle">User details</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <section style="background-color: #eee;" class="col-lg-12 d-flex">
+                                                <div class="container py-5">
+                                                    <div class="row"></div>
+                                                    <div class="row">
+                                                        <div class="col-lg-6">
+                                                            <div class="card mb-4">
+                                                                <div class="card-body text-center">
+                                                                    <img src="data:image/png;base64,{{this.id_proof}}"
+                                                                        alt="User ID Proof" style="max-width: 450px; ">
+
+                                                                </div>
+                                                            </div>
+                                                            <div class="card mb-4 mb-lg-0">
+                                                                <div class="card-body p-0">
+                                                                    <ul class="list-group list-group-flush rounded-3">
+                                                                        <h3 class="text-center m-5">About</h3>
+                                                                        <p class="m-3">{{this.about}}</p>
+                                                                    </ul>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="col-lg-6">
+                                                            <div class="card mb-4">
+                                                                <div class="card-body">
+                                                                    <div class="row">
+                                                                        <div class="col-sm-3">
+                                                                            <p class="mb-0">First Name</p>
+                                                                        </div>
+                                                                        <div class="col-sm-9">
+                                                                            <p class="text-muted mb-0">
+                                                                                {{this.first_name}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr>
+                                                                    <div class="row">
+                                                                        <div class="col-sm-3">
+                                                                            <p class="mb-0">Last Name</p>
+                                                                        </div>
+                                                                        <div class="col-sm-9">
+                                                                            <p class="text-muted mb-0">
+                                                                                {{this.last_name}}</p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr>
+                                                                    <div class="row">
+                                                                        <div class="col-sm-3">
+                                                                            <p class="mb-0">Email</p>
+                                                                        </div>
+                                                                        <div class="col-sm-9">
+                                                                            <p class="text-muted mb-0">{{this.email}}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                    <hr>
+                                                                    <div class="row">
+                                                                        <div class="col-sm-3">
+                                                                            <p class="mb-0">Phone</p>
+                                                                        </div>
+                                                                        <div class="col-sm-9">
+                                                                            <p class="text-muted mb-0">{{this.mobile}}
+                                                                            </p>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <div class="row">
+                                                                <div class="col-lg-12">
+                                                                    <div class="card mb-4">
+                                                                        <div class="card-body">
+                                                                            <div class="row">
+                                                                                <div class="col-sm-3">
+                                                                                    <p class="mb-0">Organization</p>
+                                                                                </div>
+                                                                                <div class="col-sm-9">
+                                                                                    <p class="text-muted mb-0">
+                                                                                        {{this.organization}}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr>
+                                                                            <div class="row">
+                                                                                <div class="col-sm-3">
+                                                                                    <p class="mb-0">Department</p>
+                                                                                </div>
+                                                                                <div class="col-sm-9">
+                                                                                    <p class="text-muted mb-0">
+                                                                                        {{this.department}}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr>
+                                                                            <div class="row">
+                                                                                <div class="col-sm-3">
+                                                                                    <p class="mb-0">Designation</p>
+                                                                                </div>
+                                                                                <div class="col-sm-9">
+                                                                                    <p class="text-muted mb-0">
+                                                                                        {{this.designation}}</p>
+                                                                                </div>
+                                                                            </div>
+                                                                            <hr>
+
+                                                                            <div class="row">
+                                                                                <div class="col-sm-3">
+                                                                                    <p class="mb-0">User Type</p>
+                                                                                </div>
+                                                                                <div class="col-sm-9">
+                                                                                    <p class="text-muted mb-0">
+                                                                                        {{this.user_type}}</p>
+                                                                                </div>
+                                                                            </div>
+
+                                                                        </div>
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                            </section>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary"
+                                                data-bs-dismiss="modal">Close</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <tr>
                                 <th scope="row">1</th>
                                 <td>{{this.first_name}} {{this.last_name}}</td>

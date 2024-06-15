@@ -69,13 +69,13 @@
                                             href="">Download</a>
                                         {{else ifCond requestStatus '===' 'approved'}}
                                         {{!-- {{v1}} is not equal to {{v3}} --}}
-                                        <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink"
+                                        <a class="btn btn-success text-white py-1 px-0 col-lg-4 inactiveLink"
                                             id="request-{{@index}}"> Approved </a>
                                         <a class="btn btn-success text-white py-1 px-0 col-lg-4 " href="">Download</a>
 
                                         {{else ifCond requestStatus '===' 'rejected'}}
                                         {{!-- {{v1}} is not equal to {{v3}} --}}
-                                        <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink"
+                                        <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink"
                                             id="request-{{@index}}"> Rejected </a>
                                         <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink"
                                             href="">Download</a>

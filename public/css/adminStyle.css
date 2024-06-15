@@ -41,9 +41,14 @@ h4 {
 }
 
 
+#requestIdModal{
+    /* width: 50vw; */
+    /* margin: 0; */
+}
+
 
  #profile-window{
-            max-width: 85vw;
+            max-width: 15vw;
         }
 #profile-window{
     width:84vw

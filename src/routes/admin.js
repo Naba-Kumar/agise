@@ -116,96 +116,127 @@ router.post('/home', adminAuthMiddleware, (req, res) => {
 
 });
 
-
-router.get('/requests', adminAuthMiddleware, async(req, res) => {
-    // Your OpenLayers logic here
+router.get('/requests', adminAuthMiddleware, async (req, res) => {
     try {
-        console.log("combinedData")
-
-        
         const client = await pool.poolUser.connect();
-        const  reqresult  = await client.query('SELECT * FROM requests WHERE is_isolated=$1',[false]);
-        const reqResultItems = reqresult.rows;
+        
+        const reqResult = await client.query('SELECT * FROM requests WHERE is_isolated=$1', [false]);
+        const reqResultItems = reqResult.rows;
 
-        const  userresult  = await client.query('SELECT * FROM registered');
-        const  userResultItems = userresult.rows;
-
-
-         // Combine data from both tables based on the 'email' field
-         console.log("combinedData")
-
-        //  const combinedData = reqResultItems.map(request => {
-        //     const match = userResultItems.find(item => item.email === request.email);
-        //     return {
-        //         first_name: match ? match.first_name : null,
-        //         last_name: match ? match.last_name : null,
-        //         email: request.email,
-        //         organization: match ? match.organization : null,
-        //         designation: match ? match.designation : null,
-        //         file_name: request.file_name
-        //     };
-        // });
+        const userResult = await client.query('SELECT * FROM registered');
+        const userResultItems = userResult.rows.reduce((acc, user) => {
+            acc[user.email] = user;
+            return acc;
+        }, {});
 
         const combinedData = reqResultItems.map(request => {
-            const match = userResultItems.find(item => item.email === request.email);
+            const user = userResultItems[request.email] || {};
+            const imageBuffer = user.id_proof;
+            const base64Image = imageBuffer ? imageBuffer.toString('base64') : null;
             return {
-                first_name: match ? match.first_name : null,
-                last_name: match ? match.last_name : null,
+                first_name: user.first_name,
+                last_name: user.last_name,
                 email: request.email,
-                organization: match ? match.organization : null,
-                designation: match ? match.designation : null,
-                file_name: request.file_name
+                organization: user.organization,
+                designation: user.designation,
+                file_name: request.file_name,
+                id_proof: base64Image
             };
         });
-        console.log(combinedData)
-    
-        client.release();
-        res.render('adminFileRequests', { combinedData});
-    } catch (error) {
-        
-    }
-    
 
+        client.release();
+        return res.render('adminFileRequests', { combinedData });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).send('Internal Server Error');
+    }
 });
 
-router.post('/requests', adminAuthMiddleware, async(req, res) => {
-    // Your OpenLayers logic here
-    // res.render("adminRequests");
-    console.log(req.body)
-    // return res.send("ok")
-    const {action, email, file_name } = req.body;
+router.post('/requests', adminAuthMiddleware, async (req, res) => {
+    const { action, email, file_name } = req.body;
 
-    if(action === 'approve'){
+    try {
         const client = await pool.poolUser.connect();
 
-        const approveQuery = `
-        UPDATE requests
-        SET is_checked=$1, request_status=$2 
-        WHERE email=$3 AND file_name=$4
-         `;
-         
-        const request_table_update = [true, true, email, file_name ]
+        let query = '';
+        let params = [];
 
-        await client.query(approveQuery, request_table_update);
+        if (action === 'approve') {
+            query = `
+                UPDATE requests
+                SET is_checked=$1, request_status=$2
+                WHERE email=$3 AND file_name=$4
+            `;
+            params = [true, true, email, file_name];
+        } else if (action === 'reject') {
+            query = `
+                UPDATE requests
+                SET is_checked=$1, request_status=$2
+                WHERE email=$3 AND file_name=$4
+            `;
+            params = [true, false, email, file_name];
+        } else if (action === 'isolate') {
+            query = `
+                UPDATE requests
+                SET is_checked=$1, is_isolated=$2
+                WHERE email=$3 AND file_name=$4
+            `;
+            params = [true, true, email, file_name];
+        }
 
-    }else if(action === 'reject'){
+        await client.query(query, params);
 
-    }else if(action === 'isolate'){
+        const data = { message: `Request ${action}d`, title: "Success", icon: "success" };
+        return res.status(200).json(data);
 
+    } catch (error) {
+        console.error('Error handling request:', error);
+        const data = { message: 'An error occurred', title: "Error", icon: "error" };
+        return res.status(500).json(data);
     }
-    
 });
 
-router.get('/isolated', adminAuthMiddleware, (req, res) => {
-    res.render("adminFileRequests");
 
+
+
+
+router.get('/isolated', adminAuthMiddleware, async(req, res) => {
+    try {
+        const client = await pool.poolUser.connect();
+        
+        const reqResult = await client.query('SELECT * FROM requests WHERE is_isolated=$1', [true]);
+        const reqResultItems = reqResult.rows;
+
+        const userResult = await client.query('SELECT * FROM registered');
+        const userResultItems = userResult.rows.reduce((acc, user) => {
+            acc[user.email] = user;
+            return acc;
+        }, {});
+
+        const combinedData = reqResultItems.map(request => {
+            const user = userResultItems[request.email] || {};
+            const imageBuffer = user.id_proof;
+            const base64Image = imageBuffer ? imageBuffer.toString('base64') : null;
+            return {
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: request.email,
+                organization: user.organization,
+                designation: user.designation,
+                file_name: request.file_name,
+                id_proof: base64Image
+            };
+        });
+
+        client.release();
+        return res.render('adminFileRequests', { combinedData });
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).send('Internal Server Error');
+    }    
 });
 
-router.post('/isolated', adminAuthMiddleware, (req, res) => {
-    // Your OpenLayers logic here
-    // res.render("adminRequests");
 
-});
 
 router.get('/upload', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
@@ -530,33 +561,7 @@ router.put('/manage', adminAuthMiddleware, async (req, res) => {
 });
 
 
-router.get('/isolated', adminAuthMiddleware, async (req, res) => {
-    try {
-        // const client = await pool.poolUser.connect();
-        // const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE is_added=false');
-        // client.release();
-        // res.render('adminAddCatalog', { catalogItems: rows });
-        res.render('adminFileRequestsISo');
 
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
-    }
-});
-
-router.get('/isolated', adminAuthMiddleware, async (req, res) => {
-    try {
-        // const client = await pool.poolUser.connect();
-        // const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE is_added=false');
-        // client.release();
-        // res.render('adminAddCatalog', { catalogItems: rows });
-        res.render('adminFileRequestsISo');
-
-    } catch (err) {
-        console.error(err);
-        res.status(500).send('Server Error');
-    }
-});
 
 router.get('/privilege', adminAuthMiddleware, async (req, res) => {
     try {
@@ -594,6 +599,29 @@ router.get('/search', adminAuthMiddleware, async (req, res) => {
         res.status(500).send('Server Error');
     }
 });
+
+// router.get('/search', adminAuthMiddleware, async (req, res) => {
+//     try {
+//         const client = await pool.poolUser.connect();
+//         const result = await client.query('SELECT *  FROM registered');
+//         client.release();
+
+//         const userItems = result.rows;
+
+//         const imageBuffer = result.rows[0].id_proof;
+//         result.rows[0].id_proof = imageBuffer.toString('base64');
+
+//         // client.release();
+//         res.render('adminSearch', { userItems});
+
+//         // res.render('adminAddCatalog', { catalogItems: rows });
+//         // res.render('adminCatalogManage');
+
+//     } catch (err) {
+//         console.error(err);
+//         res.status(500).send('Server Error');
+//     }
+// });
 
 
 
