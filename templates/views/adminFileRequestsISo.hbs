@@ -12,24 +12,24 @@
                 </div>
             </div>
         </nav>
-        <main class="content px-3 py-2">
+        <main class="content px-3 py-2 bg-adminbg">
             <div class="container-fluid">
                 <form action="#" method="post" class="card-body">
                     <div class="input-group mb-3">
                         <input type="search" class="form-control" placeholder="Search" aria-label="Search"
                             aria-describedby="search-addon" />
-                        <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>Search</button>
+                        <button type="button" class="btn btn-outline-primary bg-light" data-mdb-ripple-init>Search</button>
                     </div>
                     <div class="card-group vgr-cards" >
                         {{#if combinedData.length}}
 
                         {{#each combinedData}}
-                        <div class="card req-card" id="card-container-{{@index}}" style="margin-bottom: 30px;">
-                            <div class="card-body p-1">
-                                <h4 class="card-title">Request no : {{this.requestno}}</h4>
+                        <div class="card req-card rounded" id="card-container-{{@index}}" style="margin-bottom: 30px;">
+                            <div class="card-body p-3">
+                                <h6 class="card-title">Request no : {{this.requestno}}</h6>
                                 <div class="row">
                                     <div class="col-md-6 mb-2">
-                                        <p class="card-text request-text">Name: <b>    {{this.first_name}}</b> {{this.last_name}}</p>
+                                        <p class="card-text request-text">Name: <b>    {{this.first_name}} {{this.last_name}}</b></p>
                                     </div>
                                 </div>
                                 <div class="row">

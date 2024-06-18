@@ -12,7 +12,7 @@
                 </div>
             </div>
         </nav>
-        <main class="content px-3 py-2">
+        <main class="content px-3 py-2 bg-adminbg">
             <div class="container-fluid">
                 <form action="#" method="post" class="card-body">
                     <div class="input-group mb-3">
@@ -26,7 +26,7 @@
                         {{#each combinedData}}
                         <div class="card" id="card-container-{{@index}}">
                             <div class="card-body p-1">
-                                <h4 class="card-title">Card title</h4>
+                                <h6 class="card-title">Card title</h6>
                                 <div class="row">
                                     <div class="col-md-6 mb-2">
                                         <p class="card-text">Name: {{this.first_name}} {{this.last_name}}</p>
