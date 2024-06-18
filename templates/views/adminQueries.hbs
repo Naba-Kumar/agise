@@ -12,18 +12,21 @@
                 </div>
             </div>
         </nav>
-        <main class="content px-3 py-2">
+        <main class=" content px-3 py-2">
             <div class="container-fluid">
 
                 <!-- Table Element -->
-                <form action="#" method="post" class="card-body">
+                <form action="#" method="post" class=" card card-body">
+                                            {{#if queries.length}}
+
                     {{#each queries}}
-
-                    Query No:- {{this.queryid}}
-                    <div class="card p-2">
-
-
-
+                    {{!-- <div class="display-6"> --}}
+                        <h6 class="">
+                            Query No:- {{this.queryid}}
+                        </h6>
+                        {{!--
+                    </div> --}}
+                    <div class="card p-2 mb-3">
                         <div class="row  ">
                             <div class="col-md-6 mb-2">
                                 <p class="card-text">Name : {{this.full_name}}</p>
@@ -54,23 +57,16 @@
                                     </div>
                                 </div>
                             </div>
-
                             <div class="col-md-6">
                                 <div class="form-group last mb-1">
 
-                                    <p class="card-text">Reply :</p>
+                                    <p class="card-text">Message :</p>
                                     <div class="card">
                                         <p class="card-text m-2" style="height: 55px;">{{this.message}}</p>
-
                                     </div>
                                 </div>
                             </div>
-
-
                         </div>
-
-
-
                         <div class="row mt-3">
                             <div class="col-md-12">
                                 <div class="form-group first">
@@ -78,102 +74,38 @@
                                             class="text-danger">[Optional]</span> </p>
                                     {{!-- <input type="text" class="form-control" value="{{this.reason}}"
                                         style="height: 100px;" id="reason"> --}}
-                                    <textarea type="te" class="form-control" style="height: 70px;"
-                                        value="{{this.reason}}" id="reason">{{this.reason}}</textarea>
+                                    <textarea class="form-control" style="height: 70px;" id="reply-{{@index}}" value="koi"></textarea>
                                 </div>
-
                             </div>
-                            <div class="col-md-6">
+                            
 
+                        </div>
+                            <div class="row mt-3">
+                              <div class="col-md-6">
                                 <div class="form-group last mb-1">
-                                    <input type="submit" value="Ignor" class="btn px-5 btn-primary mt-2">
-                                    <input type="submit" value="Send Email" class="btn px-5 btn-primary mt-2">
+                                    {{!-- <input type="submit" value="Ignor" class="btn px-5 btn-primary mt-2">
+                                    <input type="submit" value="Send Email" class="btn px-5 btn-primary mt-2"> --}}
+
+
+                                    <input type="button" data-id="{{this.queryid}}" value="Ignor" class="btn px-4 btn-primary mt-2"
+                                    data-action="ignor" data-email="{{this.email}}" data-reply="reply-{{@index}}">
+
+                                    <input type="button" data-id="{{this.queryid}}" value="Send Email" class="btn px-4 btn-primary mt-2"
+                                    data-action="send" data-email="{{this.email}}"  data-reply="reply-{{@index}}">
                                 </div>
                             </div>
-
-                        </div>
-
-
-
+                          </div>
 
                     </div>
 
+                    <hr>
                     {{/each}}
+                    {{else}}
+                            <h1 class="display-7">There is no Queries</h1>
 
-                    {{#each queries}}
+                            {{/if}}
 
-
-                    <div class="card">
-                        <div class="row ">
-                            <div class="row m-1 ">
-                                <div class="col-md-6">
-                                    <p class="card-text">Name : {{this.full_name}}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p class="card-text">Email : {{this.email}}</p>
-                                </div>
-
-                            </div>
-
-                            <div class="row m-1 ">
-                                <div class="col-md-6">
-                                    <p class="card-text">Mobile : {{this.mobile}}</p>
-                                </div>
-                                <div class="col-md-6">
-                                    <p class="card-text">Occupation : {{this.occupation}}</p>
-                                </div>
-
-                            </div>
-                            <div id="query-flex">
-
-
-                                <div class="col-md-6 m-1">
-                                    <div class="m-1 col-md-11 ">
-                                        <div class="col-md-12">
-                                            <p class="card-text">Subject :</p>
-                                            <div class="card">
-                                                <p class="card-text m-1">{{this.reason}}</p>
-                                            </div>
-                                        </div>
-
-                                    </div>
-
-                                    <div class="m-1 col-md-11 ">
-                                        <div class="col-md-12">
-                                            <p class="card-text">Message :</p>
-                                            <div class="card">
-                                                <p class="card-text m-1">{{this.message}}</p>
-                                            </div>
-                                        </div>
-
-                                    </div>
-                                </div>
-
-                                <div class="m-1 col-md-10">
-                                    <div class="col-md-6">
-                                        <p class="card-text">Reply :</p>
-                                        <div class="card">
-                                            <p class="card-text m-1">{{this.message}}</p>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-
-                            </div>
-                            <div class="col-md-7 px-3">
-                                <div class="card-block px-6">
-
-                                    <br>
-                                    <a href="#" class="m-1 btn btn-primary  ">Read More</a>
-                                </div>
-                            </div>
-                            <!-- Carousel start -->
-
-                            <!-- End of carousel -->
-                        </div>
-                    </div>
-                    {{/each}}
+                    
 
                 </form>
 
@@ -184,5 +116,68 @@
     </div>
 </div>
 
-<!-- Card Start -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const actionButtons = document.querySelectorAll('.btn-primary');
+
+
+
+        actionButtons.forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const action = event.target.getAttribute('data-action');
+                const email = event.target.getAttribute('data-email');
+                const queryid = event.target.getAttribute('data-id');
+                const replyId = event.target.getAttribute('data-reply');
+                const reply = document.getElementById(replyId).value;
+
+                try {
+                    const response = await fetch('/admin/queries', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ action, queryid, email, reply }),
+                    }).then(response => response.json())
+                        .then(data => {
+
+                            console.log('Response data:', data);
+                            if (data) {
+                                console.log(data.message)
+                                Swal.fire({
+                                    title: data.title,
+                                    text: data.message,
+                                    confirmButtonText: "OK",
+                                    icon: data.icon
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        console.log("ll")
+                                        window.location.reload(); // Replace with your desired URL
+                                    }
+                                });
+                            } else {
+                                console.error('Unexpected response format:', data);
+                                Swal.fire({
+                                    title: 'Error',
+                                    text: 'Unexpected response format.',
+                                    icon: 'error'
+                                });
+                            }
+                        })
+
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+
+                    // Show error alert using SweetAlert
+                    Swal.fire({
+                        title: 'Error!',
+                        text: `There was a problem performing the action ${action} for ${email}.`,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                }
+            });
+        });
+    });
+</script>
+
 {{>footer}}

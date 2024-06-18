@@ -38,41 +38,92 @@
                                 <th scope="col">Email</th>
                                 <th scope="col">Organization</th>
                                 <th scope="col">Designation</th>
+                                <th scope="col">Data Privilege</th>
 
-                                <th scope="col">File Privilege</th>
+
                             </tr>
                         </thead>
                         <tbody>
+                            {{#each userItems}}
                             <tr>
-                                <th scope="row">1</th>
-                                <td>Naba Kumar Chouhan </td>
-                                <td>Nabakumarchouhan@gmail.com </td>
-                                <td>intern</td>
+                                <th scope="row">{{this.user_id}}</th>
+                                <td>{{this.first_name}} {{this.last_name}} </td>
+                                <td>{{this.email}}</td>
+                                <td>{{this.organization}}</td>
+                                <td>{{this.designation}}</td>
 
-                                <td>Assam State Space Application Centre</td>
                                 <td>
                                     <div class="form-check form-switch fs-3" >
-                                        <input class="form-check-input" type="checkbox" role="switch"
-                                            id="flexSwitchCheckDefault">
-            
+                                        {{#ifCond privileged '==' true}}
+                                        <input class="form-check-input btn-delete" type="checkbox" role="switch" data-email="{{this.email}}" checked>
+                                        {{else}}
+                                         <input class="form-check-input btn-delete" type="checkbox" role="switch" data-email="{{this.email}}">
+                                        {{/ifCond}}
+
+
+                                    {{!-- </button> --}}
                                     </div>
                                 </td>
-
                             </tr>
+                            {{/each}}
+                           
                         </tbody>
                     </table>
                 </div>
             </div>
             <div class="container-fluid">
-
-
                 <!-- Table Element -->
-
-
             </div>
         </main>
-
-
     </div>
 </div>
+
+<script>
+   document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('tbody').addEventListener('change', function(event) {
+        if (event.target.classList.contains('btn-delete')) {
+            const button = event.target;
+            const isChecked = button.checked;
+            const email = button.getAttribute('data-email');
+            const title = isChecked ? 'Are you sure?' : 'Are you sure to?';
+            const text = isChecked ? 'Provide the Privilege of Catalog data?!' : 'Revoke the Privilege of Catalog data?!';
+            const confirmButtonText = isChecked ? 'Yes, Provided!' : 'Yes, Revoked!';
+
+            Swal.fire({
+                title: title,
+                text: text,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: confirmButtonText
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/admin/privilege', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email: email, privileged: isChecked })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            Swal.fire('Updated!', 'The visibility status has been updated.', 'success');
+                        } else {
+                            Swal.fire('Error!', 'There was an error updating the visibility status.', 'error');
+                            button.checked = !isChecked; // Revert the checkbox state
+                        }
+                    })
+                    .catch(error => {
+                        Swal.fire('Error!', 'There was an error updating the visibility status.', 'error');
+                        button.checked = !isChecked; // Revert the checkbox state
+                    });
+                } else {
+                    button.checked = !isChecked; // Revert the checkbox state
+                }
+            });
+        }
+    });
+});
+
+</script>
 {{>footer}}

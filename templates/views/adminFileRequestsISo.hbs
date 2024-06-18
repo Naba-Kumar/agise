@@ -20,9 +20,11 @@
                             aria-describedby="search-addon" />
                         <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>Search</button>
                     </div>
-                    <div class="card-group vgr-cards" id="card-container">
+                    <div class="card-group vgr-cards" >
+                        {{#if combinedData.length}}
+
                         {{#each combinedData}}
-                        <div class="card" id="card-{{this.email}}-{{this.file_name}}">
+                        <div class="card" id="card-container-{{@index}}">
                             <div class="card-body p-1">
                                 <h4 class="card-title">Card title</h4>
                                 <div class="row">
@@ -54,18 +56,22 @@
                                     data-action="approve" data-email="{{this.email}}" data-file="{{this.file_name}}">
                                 <input type="button" value="Reject" class="btn px-4 btn-primary mt-2"
                                     data-action="reject" data-email="{{this.email}}" data-file="{{this.file_name}}">
+                                {{!-- <input type="button" value="Isolate" class="btn px-4 btn-primary mt-2" --}}
+                                    {{!-- data-action="isolateo0" data-email="{{this.email}}" data-file="{{this.file_name}}"> --}}
                             </div>
-                            <div class="card-img-body" data-bs-toggle="modal" data-bs-target="#requestModal">
+                            <div class="card-img-body"  data-bs-toggle="modal" data-bs-target="#requestModal">
                                 {{#if this.id_proof}}
-                                <img src="data:image/png;base64,{{this.id_proof}}" alt="User ID Proof"
-                                    style="width: 100%; cursor: pointer;" class="img-thumbnail" data-toggle="modal"
-                                    data-target="#imageModal" data-src="data:image/png;base64,{{this.id_proof}}">
+                                <img src="data:image/png;base64,{{this.id_proof}}" alt="User ID Proof" style="width: 100%; cursor: pointer;" class="img-thumbnail" data-toggle="modal" data-target="#imageModal" data-src="data:image/png;base64,{{this.id_proof}}">
                                 {{else}}
                                 <p>No ID Proof available</p>
                                 {{/if}}
                             </div>
                         </div>
                         {{/each}}
+                        {{else}}
+    <h1 class="display-7">There is no isolated requests</h1>
+
+{{/if}}
                     </div>
                 </form>
             </div>
@@ -73,84 +79,103 @@
     </div>
 </div>
 
-<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel"
-    aria-hidden="true">
+{{!-- <!-- Image Modal -->
+class="modal fade" id="exampleModalLong" tabindex="-1"
+                                aria-labelledby="exampleModalLongTitle" aria-hidden="true"
+                                <button type="button" class="btn " data-bs-toggle="modal"
+                                        data-bs-target="#exampleModalLong"><span
+                                            class="material-symbols-outlined">visibility</span></button> --}}
+<div class="modal fade" id="requestModal" tabindex="-1" role="dialog" aria-labelledby="imageModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
-        <div class="modal-content">
+        <div class="modal-content" >
             <div class="modal-body" id="requestIdModal">
                 <img id="modalImage" src="" class="img-fluid" alt="Zoomed Image">
             </div>
         </div>
     </div>
 </div>
-
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@panzoom/panzoom@4.4.0/dist/panzoom.min.js"></script>
 
 <script>
-document.addEventListener('DOMContentLoaded', () => {
-    const actionButtons = document.querySelectorAll('.btn-primary');
+    document.addEventListener('DOMContentLoaded', () => {
+        const actionButtons = document.querySelectorAll('.btn-primary');
+        const images = document.querySelectorAll('.card-img-body img');
 
-    actionButtons.forEach(button => {
-        button.addEventListener('click', async (event) => {
-            const action = event.target.getAttribute('data-action');
-            const email = event.target.getAttribute('data-email');
-            const file_name = event.target.getAttribute('data-file');
-            const card = document.getElementById(`card-${email}-${file_name}`);
-            
-            console.log('Button clicked:', { action, email, file_name });
-            console.log('Card element:', card);
-
-            if (!card) {
-                console.error(`Card element not found for email: ${email} and file_name: ${file_name}`);
-                return;
-            }
-
-            try {
-                const response = await fetch('/admin/requests', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ action, email, file_name }),
+        images.forEach(image => {
+            image.addEventListener('click', (event) => {
+                const src = event.target.getAttribute('data-src');
+                const modalImage = document.getElementById('modalImage');
+                modalImage.src = src;
+                
+                // Initialize Panzoom
+                Panzoom(modalImage, {
+                    maxScale: 5,
+                    contain: 'inside'
                 });
+            });
+        });
 
-                const data = await response.json();
-                console.log('Response data:', data);
+        actionButtons.forEach(button => {
+            button.addEventListener('click', async (event) => {
+                const action = event.target.getAttribute('data-action');
+                const email = event.target.getAttribute('data-email');
+                const file_name = event.target.getAttribute('data-file');
+                        {{!-- {{#each combinedData}} --}}
 
-                if (data) {
+                const card = document.getElementById(`card-container-{{@index}}`);
+                        {{!-- {{/each}} --}}
+
+
+                try {
+                    const response = await fetch('/admin/requests', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ action, email, file_name }),
+                    }) .then(response => response.json())
+                .then(data => {
+                    
+                    console.log('Response data:', data);
+                    if (data) {
+                        console.log(data.message)
+                        Swal.fire({
+                            title: data.title,
+                            text: data.message,
+                            confirmButtonText: "OK",
+                            icon: data.icon
+                        }).then((result) => {
+                                window.location.reload(); // Replace with your desired URL
+                            if (result.isConfirmed) {
+                                console.log("ll")
+                                card.remove();  // Ensure this line correctly identifies and removes the card element --}}
+                            }
+                        });
+                    } else {
+                        console.error('Unexpected response format:', data);
+                        Swal.fire({
+                            title: 'Error',
+                            text: 'Unexpected response format.',
+                            icon: 'error'
+                        });
+                    }
+                })
+
+                } catch (error) {
+                    console.error('There was a problem with the fetch operation:', error);
+
+                    // Show error alert using SweetAlert
                     Swal.fire({
-                        title: data.title,
-                        text: `Action ${action} for ${email} was successful!`,
-                        icon: data.icon
-                    }).then((result) => {
-                        console.log('SweetAlert2 then block executed, result:', result);
-                        if (result.isConfirmed) {
-                            console.log('Removing card:', card);
-                            card.remove();
-                        }
-                    });
-                } else {
-                    console.error('Unexpected response format:', data);
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Unexpected response format.',
-                        icon: 'error'
+                        title: 'Error!',
+                        text: `There was a problem performing the action ${action} for ${email}.`,
+                        icon: 'error',
+                        confirmButtonText: 'OK'
                     });
                 }
-            } catch (error) {
-                console.error('There was a problem with the fetch operation:', error);
-                Swal.fire({
-                    title: 'Error',
-                    text: `There was a problem performing the action ${action} for ${email}.`,
-                    icon: 'error',
-                    confirmButtonText: 'OK'
-                });
-            }
+            });
         });
     });
-});
-
 </script>
 {{>footer}}
+

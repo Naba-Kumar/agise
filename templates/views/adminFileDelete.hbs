@@ -36,23 +36,35 @@
                                 <th scope="col">id</th>
                                 <th scope="col">Title</th>
                                 <th scope="col">File Name</th>
+                                <th scope="col">Workspace</th>
+                                <th scope="col">Store</th>
                                 <th scope="col">status</th>
                                 <th scope="col">Delete</th>
 
                             </tr>
                         </thead>
                         <tbody>
+
+                            {{#each dataItems}}
                             <tr>
                                 <th scope="row">1</th>
-                                <td>Assam Boundary</td>
-                                <td>assam_boundary</td>
-                                <td>visible</td>
+                                <td>{{this.title}}</td>
+                                <td>{{this.file_name}}</td>
+                                <td>{{this.workspace}}</td>
+                                <td>{{this.store}}</td>
+                                <td>{{this.visibility}}</td>
                                 <td>
-                                    <span class="material-symbols-outlined">delete</span>
+                                    <input type="button" class="btn btn-danger" value="delete" file-name="{{this.file_name}}" file-workspace="{{this.workspace}}" file-store="{{this.store}}">
+                                    {{!-- <button class="btn" file-name="{{this.file_name}}" file-workspace="{{this.workspace}}" file-store="{{this.store}}">
+                                        <span class="material-symbols-outlined">delete</span>
+                                    </button> --}}
+
                                 </td>
                             </tr>
-                           
+                            {{/each}}
+
                         </tbody>
+
                     </table>
                 </div>
             </div>
@@ -68,4 +80,64 @@
 
     </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    const actionButtons = document.querySelectorAll('.btn');
+
+    actionButtons.forEach(button => {
+        button.addEventListener('click', async (event) => {
+            const file_name = event.target.getAttribute('file-name');
+            const workspace = event.target.getAttribute('file-workspace');
+            const store = event.target.getAttribute('file-store');
+            const token = localStorage.getItem('token'); // Retrieve the token from localStorage
+
+
+            try {
+                const response = await fetch('/admin/delete', {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // Include the token in the header
+                    },
+                    body: JSON.stringify({ file_name, workspace, store }),
+                    credentials: 'include' // Ensure cookies or other credentials are sent
+                }).then(response => response.json())
+                  .then(data => {
+                      console.log('Response data:', data);
+                      if (data) {
+                          console.log(data.message);
+                          Swal.fire({
+                              title: data.title,
+                              text: data.message,
+                              confirmButtonText: "OK",
+                              icon: data.icon
+                          }).then((result) => {
+                              if (result.isConfirmed) {
+                                  window.location.reload();
+                              }
+                          });
+                      } else {
+                          console.error('Unexpected response format:', data);
+                          Swal.fire({
+                              title: 'Error',
+                              text: 'Unexpected response format.',
+                              icon: 'error'
+                          });
+                      }
+                  });
+
+            } catch (error) {
+                console.error('There was a problem with the fetch operation:', error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: `There was a problem performing the action.`,
+                    icon: 'error',
+                    confirmButtonText: 'OK'
+                });
+            }
+        });
+    });
+});
+
+</script>
 {{>footer}}

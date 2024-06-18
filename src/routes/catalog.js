@@ -80,7 +80,7 @@ require('dotenv').config();
 router.get('/', async (req, res) => {
     try {
         const client = await pool.poolUser.connect();
-        const catalogResult = await client.query('SELECT file_name, file_id, workspace, title, description FROM catalog');
+        const catalogResult = await client.query('SELECT file_name, file_id, workspace, title, description FROM catalog WHERE visibility=$1', [true]);
         const catalogItems = catalogResult.rows;
 
         const token = req.cookies.token;

@@ -46,21 +46,42 @@ h4 {
     /* margin: 0; */
 }
 
-
+/* 
  #profile-window{
             max-width: 15vw;
         }
 #profile-window{
     width:84vw
+} */
+
+
+
+#profile-window{
+    max-width: 85vw;
+}
+#profile-window{
+width:84vw
 }
 
+.card {
+    display: block; 
+      margin-bottom: 20px;
+      line-height: 1.42857143;
+      background-color: #fff;
+      border-radius: 2px;
+      border: none;
+      box-shadow: 0 2px 5px 0 rgba(0,0,0,0.16),0 2px 10px 0 rgba(0,0,0,0.12); 
+      transition: box-shadow .25s; 
+    }
+    .card:hover {
+      box-shadow: 0 8px 17px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+  }
 /* Layout for admin dashboard skeleton */
 
 
 /* // Bootstrap resets */
-.card {
-  border: none;
-}
+/* .card {
+} */
 .card-img {
   border-radius: 0;
 }

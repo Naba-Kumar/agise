@@ -12,6 +12,9 @@ const childProcess = require('child_process');
 const { exec } = childProcess;
 const AdmZip = require('adm-zip');
 const axios = require('axios');
+const validator = require('validator')
+const fs = require('fs')
+
 
 const cookieParser = require('cookie-parser');
 const { log } = require('console');
@@ -19,6 +22,18 @@ router.use(cookieParser());
 
 router.use(bodyParser.json());
 router.use(bodyParser.urlencoded({ extended: true }));
+const nodemailer = require('nodemailer');
+
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: process.env.email,
+        pass: process.env.appw
+    }
+});
+
+
+
 
 
 
@@ -31,10 +46,20 @@ const loginstorage = multer.diskStorage({
     }
 });
 
+
+
 const login = multer({ storage: loginstorage });
 
 
+const storage = multer.diskStorage({
+    destination: 'shpuploads/',
+    filename: (req, file, cb) => {
+        // Use the original filename (without any modifications)
+        cb(null, file.originalname);
+    }
+});
 const shpupload = multer({
+    storage,
     dest: 'shpuploads/',
     fileFilter: (req, file, cb) => {
         if (file.mimetype === 'application/zip' || file.mimetype === 'application/x-zip-compressed') {
@@ -43,7 +68,8 @@ const shpupload = multer({
             cb(new Error('Invalid file type. Only ZIP files are allowed.'));
         }
     }
-});;
+});
+
 
 
 
@@ -119,8 +145,8 @@ router.post('/home', adminAuthMiddleware, (req, res) => {
 router.get('/requests', adminAuthMiddleware, async (req, res) => {
     try {
         const client = await pool.poolUser.connect();
-        
-        const reqResult = await client.query('SELECT * FROM requests WHERE is_isolated=$1', [false]);
+
+        const reqResult = await client.query('SELECT * FROM requests WHERE is_checked=$1 AND is_isolated=$2', [false, false]);
         const reqResultItems = reqResult.rows;
 
         const userResult = await client.query('SELECT * FROM registered');
@@ -164,17 +190,17 @@ router.post('/requests', adminAuthMiddleware, async (req, res) => {
         if (action === 'approve') {
             query = `
                 UPDATE requests
-                SET is_checked=$1, request_status=$2
-                WHERE email=$3 AND file_name=$4
+                SET is_checked=$1, request_status=$2, is_isolated=$3
+                WHERE email=$4 AND file_name=$5
             `;
-            params = [true, true, email, file_name];
+            params = [true, true, false, email, file_name];
         } else if (action === 'reject') {
             query = `
                 UPDATE requests
-                SET is_checked=$1, request_status=$2
-                WHERE email=$3 AND file_name=$4
+                SET is_checked=$1, request_status=$2, is_isolated=$3
+                WHERE email=$4 AND file_name=$5
             `;
-            params = [true, false, email, file_name];
+            params = [true, false, false, email, file_name];
         } else if (action === 'isolate') {
             query = `
                 UPDATE requests
@@ -200,10 +226,10 @@ router.post('/requests', adminAuthMiddleware, async (req, res) => {
 
 
 
-router.get('/isolated', adminAuthMiddleware, async(req, res) => {
+router.get('/isolated', adminAuthMiddleware, async (req, res) => {
     try {
         const client = await pool.poolUser.connect();
-        
+
         const reqResult = await client.query('SELECT * FROM requests WHERE is_isolated=$1', [true]);
         const reqResultItems = reqResult.rows;
 
@@ -229,11 +255,11 @@ router.get('/isolated', adminAuthMiddleware, async(req, res) => {
         });
 
         client.release();
-        return res.render('adminFileRequests', { combinedData });
+        return res.render('adminFileRequestsIso', { combinedData });
     } catch (error) {
         console.error('Error fetching data:', error);
         res.status(500).send('Internal Server Error');
-    }    
+    }
 });
 
 
@@ -278,7 +304,10 @@ router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), a
 
 
         console.log("hello from shpupld")
-        let zipfilePath = req.file.path;
+
+       
+// -----------------------
+
         const basedir = 'shpuploads/'
         const zip = new AdmZip(req.file.path);
 
@@ -319,6 +348,34 @@ router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), a
 
             // If successful, send a success response
             // res.send('Shapefile uploaded successfully.');
+
+            const catalogPath = path.join(__dirname, "../../catalog")
+
+            let sourceFilePath  = req.file.path;
+            // Check if the source file exists
+            if (!fs.existsSync(sourceFilePath)) {
+               return res.status(404).send('Source file not found.');
+           }
+   
+           // Create the destination folder if it doesn't exist
+           if (!fs.existsSync(catalogPath)) {
+               fs.mkdirSync(catalogPath, { recursive: true });
+           }
+           
+           // const destinationFolderPath = req.body.destinationFolderPath; // Destination folder path
+           const newFileName = table_name; // New file name (without extension)
+   
+             // Construct the destination file path with the new name
+             const fileExtension = path.extname(sourceFilePath);
+             const destinationFilePath = path.join(catalogPath, `${newFileName}${fileExtension}`);
+   
+             // Copy the file
+             console.log(fileExtension)
+
+             console.log(destinationFilePath)
+           fs.copyFileSync(sourceFilePath, destinationFilePath);
+        //    fs.unlinkSync(sourceFilePath);
+
             const is_added = false;
             const query = `
                  INSERT INTO shapefiles (file_name, is_added)
@@ -355,8 +412,8 @@ router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), a
 
         console.error(`erryor: ${error}`)
         const data = { message: 'Invalid zip format or Something went wrong', title: "Oops?", icon: "error" };
-                console.log(data)
-                return res.status(400).json(data);
+        console.log(data)
+        return res.status(400).json(data);
     }
 
 });
@@ -500,14 +557,66 @@ router.post('/catalog', adminAuthMiddleware, login.single('id_proof'), async (re
 
 
 });
-router.post('/delete', adminAuthMiddleware, (req, res) => {
-    // Your OpenLayers logic here
-    // res.render("adminDelete");
+router.delete('/delete', adminAuthMiddleware, async (req, res) => {
+    console.log('Request body:', req.body);
+    const { file_name, workspace, store } = req.body;
+    const geoserverUrl = 'http://localhost:8080/geoserver/rest';
+    console.log(`${geoserverUrl}/workspaces/${workspace}/datastores/${store}/featuretypes/${file_name}`);
 
+    if (!file_name || !workspace || !store) {
+        return res.status(400).json({ message: 'Missing required fields: file_name, workspace, or store' });
+    }
+
+    try {
+        const geoServerResponse = await axios.delete(`${geoserverUrl}/workspaces/${workspace}/datastores/${store}/featuretypes/${file_name}`, {
+            auth: {
+                username: 'admin',
+                password: 'geoserver'
+            }
+        });
+
+        console.log('GeoServer response:', geoServerResponse.status, geoServerResponse.statusText);
+
+        if (geoServerResponse.status === 200 || geoServerResponse.status === 204) {
+            try {
+                const client = await pool.connect();
+                await client.query(`DROP TABLE IF EXISTS ${file_name}`);
+                await client.query('DELETE FROM catalog WHERE file_name = $1', [file_name]);
+                client.release();
+
+                const data = { message: 'Deletion successful', title: "Delete", icon: "success", redirect: '\\' };
+                console.log(data);
+                return res.json(data);
+
+            } catch (pgError) {
+                console.error('PostgreSQL error:', pgError.message);
+                const data = { message: 'Failed to delete table from PostgreSQL', title: "Oops?", icon: "error", redirect: '\\' };
+                return res.status(500).json(data);
+            }
+        } else {
+            console.error('GeoServer unpublish layer failed:', geoServerResponse.data);
+            return res.status(geoServerResponse.status).json({ message: 'Failed to unpublish layer', details: geoServerResponse.data });
+        }
+    } catch (error) {
+        console.error('Error deleting layer:', error.message);
+        return res.status(error.response?.status || 500).json({ message: 'Error deleting layer', details: error.message });
+    }
 });
-router.get('/delete', adminAuthMiddleware, (req, res) => {
-    // Your OpenLayers logic here
-    res.render("adminFileDelete");
+
+router.get('/delete', adminAuthMiddleware, async (req, res) => {
+    try {
+        const client = await pool.poolUser.connect();
+        const result = await client.query('SELECT *  FROM catalog');
+        client.release();
+
+        const dataItems = result.rows;
+
+        // client.release();
+        res.render('adminFileDelete', { dataItems });
+    } catch (err) {
+        console.error(err);
+        res.status(500).send('Server Error');
+    }
 
 });
 
@@ -521,7 +630,7 @@ router.get('/manage', adminAuthMiddleware, async (req, res) => {
         const catalogItems = result.rows;
 
         // client.release();
-        res.render('adminCatalogManage', { catalogItems});
+        res.render('adminCatalogManage', { catalogItems });
 
         // res.render('adminAddCatalog', { catalogItems: rows });
         // res.render('adminCatalogManage');
@@ -565,15 +674,46 @@ router.put('/manage', adminAuthMiddleware, async (req, res) => {
 
 router.get('/privilege', adminAuthMiddleware, async (req, res) => {
     try {
-        // const client = await pool.poolUser.connect();
-        // const { rows } = await client.query('SELECT file_id, file_name FROM shapefiles WHERE is_added=false');
+        const client = await pool.poolUser.connect();
+        const result = await client.query('SELECT * FROM registered');
+        const userItems = result.rows;
         // client.release();
         // res.render('adminAddCatalog', { catalogItems: rows });
-        res.render('adminPrivilege');
+        // console.log(userItems)
+        res.render('adminPrivilege', { userItems });
 
     } catch (err) {
         console.error(err);
         res.status(500).send('Server Error');
+    }
+});
+
+
+
+
+router.put('/privilege', adminAuthMiddleware, async (req, res) => {
+    const { email, privileged } = req.body;
+    console.log(req.body)
+
+    if (email == null || privileged == null) {
+        return res.status(400).json({ error: 'Invalid request' });
+    }
+
+    try {
+        const client = await pool.poolUser.connect();
+        const query = `
+            UPDATE registered
+            SET privileged = $1
+            WHERE email = $2
+        `;
+        const values = [privileged, email];
+
+        await client.query(query, values);
+        client.release(); // Ensure the connection is released
+        res.status(200).json({ success: true, icon: 'success' });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ error: 'Server Error' });
     }
 });
 
@@ -589,7 +729,7 @@ router.get('/search', adminAuthMiddleware, async (req, res) => {
         result.rows[0].id_proof = imageBuffer.toString('base64');
 
         // client.release();
-        res.render('adminSearch', { userItems});
+        res.render('adminSearch', { userItems });
 
         // res.render('adminAddCatalog', { catalogItems: rows });
         // res.render('adminCatalogManage');
@@ -636,7 +776,7 @@ router.get('/queries', adminAuthMiddleware, async (req, res) => {
     // Your OpenLayers logic here
     try {
         const client = await pool.poolUser.connect();
-        const { rows } = await client.query('SELECT * FROM queries');
+        const { rows } = await client.query('SELECT * FROM queries WHERE isresolved=$1', [false]);
         client.release();
         res.render('adminQueries', { queries: rows });
     } catch (err) {
@@ -645,9 +785,74 @@ router.get('/queries', adminAuthMiddleware, async (req, res) => {
     }
 
 });
-router.post('/queries', adminAuthMiddleware, (req, res) => {
-    // Your OpenLayers logic here
-    // res.render("adminQueries");
+router.post('/queries', adminAuthMiddleware, async (req, res) => {
+
+    console.log(req.body)
+    const { action, queryid, email, reply } = req.body
+        const client = await pool.poolUser.connect();
+
+        let query = '';
+        let params = [];
+
+        if (action === 'ignor') {
+            try {
+                query = `
+                    UPDATE queries
+                    SET isresolved=$1
+                    WHERE queryid=$2
+                `;
+                params = [true, queryid];
+                await client.query(query, params);
+                const data = { message: 'Ignored', title: "Alert", icon: "alert" };
+                    return res.status(400).json(data);
+            } catch (error) {
+                
+            }
+
+        } else if (action === 'send') {
+
+            try {
+
+                if (!validator.isEmail(email)) {
+                    const data = { message: 'Invalid email', title: "Alert", icon: "danger" };
+                    return res.status(400).json(data);
+                }
+
+                
+                // Send reply via email
+                await transporter.sendMail({
+                    from: process.env.email,
+                    to: req.body.email,
+                    subject: 'Answer of your Query',
+                    text: `${reply}`
+                });
+                
+                const client = await pool.poolUser.connect();
+                query = `
+                UPDATE queries
+                SET isresolved=$1
+                WHERE queryid=$2
+                `;
+                params = [true, queryid];
+                await client.query(query, params);
+                client.release()
+
+
+                const data = { message: 'reply sent successfully', title: "Sent", icon: "success" };
+                return res.status(400).json(data);
+
+
+
+            } catch (err) {
+                console.error('Error in sending reply via email:', err);
+                const error = { message: 'something went wrong' };
+
+                const data = { message: 'something went wrong, Try again!', title: "Error", icon: "danger" };
+                return res.status(400).json(data);
+            }
+
+
+        }
 
 });
 router.post('/logout', adminAuthMiddleware, (req, res) => {

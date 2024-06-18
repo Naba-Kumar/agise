@@ -6,6 +6,11 @@ require('./src/db/schema')
 const app = express();
 const session = require("express-session")
 const flash = require("express-flash")
+const jwt = require('jsonwebtoken');
+const dotenv = require('dotenv');
+
+// Load environment variables from .env file
+dotenv.config();
 
 // const pool = require('./src/db/connection')
 
@@ -29,7 +34,7 @@ app.use(express.static(__dirname + '/public'));
 const jwtMiddleware = (req, res, next) => {
     const token = req.headers['authorization'] && req.headers['authorization'].split(' ')[1];
     if (token) {
-        jwt.verify(token, secret, (err, decoded) => {
+        jwt.verify(token, process.env.adminSecretKey, (err, decoded) => {
             if (err) {
                 return res.status(401).send('Unauthorized');
             }

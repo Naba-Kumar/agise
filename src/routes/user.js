@@ -510,7 +510,7 @@ router.post('/login', upload.single('id_proof'), async (req, res) => {
             }
             console.log("4")
 
-            const token = await jwt.sign({ email: user.rows[0].email }, process.env.secretKey, { expiresIn: '24h' });
+            const token = await jwt.sign({ email: user.rows[0].email }, process.env.secretKey, { expiresIn: '240h' });
 
             console.log("token")
 
