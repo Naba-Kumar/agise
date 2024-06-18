@@ -244,6 +244,7 @@ router.get('/isolated', adminAuthMiddleware, async (req, res) => {
             const imageBuffer = user.id_proof;
             const base64Image = imageBuffer ? imageBuffer.toString('base64') : null;
             return {
+                requestno: request.requestno,
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: request.email,

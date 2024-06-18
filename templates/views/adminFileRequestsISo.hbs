@@ -24,32 +24,32 @@
                         {{#if combinedData.length}}
 
                         {{#each combinedData}}
-                        <div class="card" id="card-container-{{@index}}">
+                        <div class="card req-card" id="card-container-{{@index}}" style="margin-bottom: 30px;">
                             <div class="card-body p-1">
-                                <h4 class="card-title">Card title</h4>
+                                <h4 class="card-title">Request no : {{this.requestno}}</h4>
                                 <div class="row">
                                     <div class="col-md-6 mb-2">
-                                        <p class="card-text">Name: {{this.first_name}}</p>
+                                        <p class="card-text request-text">Name: <b>    {{this.first_name}}</b> {{this.last_name}}</p>
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="col-md-6 mb-2">
-                                        <p class="card-text">Email: {{this.email}}</p>
+                                        <p class="card-text request-text">Email: <b>{{this.email}}</b></p>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 mb-2">
-                                        <p class="card-text">Organization: {{this.organization}}</p>
+                                    <div class="col-md-6 mb-2 request-text">
+                                        <p class="card-text">Organization: <b>{{this.organization}}</b></p>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 mb-2">
-                                        <p class="card-text">Designation: {{this.designation}}</p>
+                                    <div class="col-md-6 mb-2 request-text">
+                                        <p class="card-text">Designation: <b>{{this.designation}}</b></p>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-md-6 mb-2">
-                                        <p class="card-text">File Title: {{this.file_name}}</p>
+                                    <div class="col-md-6 mb-2 request-text">
+                                        <p class="card-text">File Title: <b>{{this.file_name}}</b></p>
                                     </div>
                                 </div>
                                 <input type="button" value="Approve" class="btn px-4 btn-primary mt-2"
@@ -64,14 +64,16 @@
                                 <img src="data:image/png;base64,{{this.id_proof}}" alt="User ID Proof" style="width: 100%; cursor: pointer;" class="img-thumbnail" data-toggle="modal" data-target="#imageModal" data-src="data:image/png;base64,{{this.id_proof}}">
                                 {{else}}
                                 <p>No ID Proof available</p>
-                                {{/if}}
+                                {{/if}}                        
                             </div>
                         </div>
                         {{/each}}
+                        
                         {{else}}
-    <h1 class="display-7">There is no isolated requests</h1>
+                         <h1 class="display-7">There is no isolated requests</h1>
 
-{{/if}}
+                        {{/if}}
+
                     </div>
                 </form>
             </div>
