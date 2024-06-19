@@ -82,7 +82,9 @@ router.get('/', (req, res) => {
 
 router.get('/home', adminAuthMiddleware, (req, res) => {
     // Your OpenLayers logic here
-    res.render("adminHome");
+    console.log(req.user)
+    const admin_id= req.user.admin_id;
+    res.render("adminHome",{admin_id});
 
 });
 
@@ -160,6 +162,7 @@ router.get('/requests', adminAuthMiddleware, async (req, res) => {
             const imageBuffer = user.id_proof;
             const base64Image = imageBuffer ? imageBuffer.toString('base64') : null;
             return {
+                requestno: request.requestno,
                 first_name: user.first_name,
                 last_name: user.last_name,
                 email: request.email,
@@ -278,7 +281,7 @@ router.post('/shpuploads', adminAuthMiddleware, shpupload.single('shapefile'), a
     try {
         const { table_name, workspace, data_store, srid } = req.body;
 
-        if (!table_name || !workspace || !data_store || !srid) {
+        if (!table_name || !srid) {
             const data = { message: 'All Fields Are Required', title: "Alert", icon: "warning", redirect: '\\admin\\upload' };
             return res.status(400).json(data);
         }

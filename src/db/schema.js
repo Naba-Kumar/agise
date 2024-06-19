@@ -31,7 +31,7 @@ async function createTables() {
         mobile VARCHAR(11) NOT NULL,
         occupation VARCHAR(100) NOT NULL,
         reason VARCHAR(255) NOT NULL,
-        message VARCHAR(400) NOT NULL,
+        message VARCHAR(300) NOT NULL,
         isresolved BOOLEAN NOT NULL
       ); 
 

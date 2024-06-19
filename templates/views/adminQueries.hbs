@@ -12,11 +12,11 @@
                 </div>
             </div>
         </nav>
-        <main class=" content px-3 py-2">
-            <div class="container-fluid">
+        <main class=" content px-3 py-2 bg-adminbg">
+            <div class="container-fluid p-4">
 
                 <!-- Table Element -->
-                <form action="#" method="post" class=" card card-body">
+                <form action="#" method="post" class="">
                                             {{#if queries.length}}
 
                     {{#each queries}}
@@ -26,7 +26,7 @@
                         </h6>
                         {{!--
                     </div> --}}
-                    <div class="card p-2 mb-3">
+                    <div class="card p-4 request-text rounded" style="margin-bottom: 20px;">
                         <div class="row  ">
                             <div class="col-md-6 mb-2">
                                 <p class="card-text">Name : {{this.full_name}}</p>
@@ -52,7 +52,7 @@
                             <div class="col-md-6">
                                 <div class="form-group first">
                                     <p class="card-text">Subject :</p>
-                                    <div class="card">
+                                    <div class="container overflow-auto rounded border border-primary">
                                         <p class="card-text m-2" style="height: 55px;">{{this.reason}}</p>
                                     </div>
                                 </div>
@@ -61,7 +61,7 @@
                                 <div class="form-group last mb-1">
 
                                     <p class="card-text">Message :</p>
-                                    <div class="card">
+                                    <div class="container overflow-auto rounded border border-primary">
                                         <p class="card-text m-2" style="height: 55px;">{{this.message}}</p>
                                     </div>
                                 </div>

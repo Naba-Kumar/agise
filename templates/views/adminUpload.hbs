@@ -12,8 +12,8 @@
                 </div>
             </div>
         </nav>
-        <main class="content px-3 py-2">
-            <div class="container-fluid">
+        <main class="content px-3 py-2  bg-adminbg">
+            <div class="container-fluid p-4">
 
 
                 <!-- Table Element -->
@@ -31,27 +31,7 @@
 
                     </div>
 
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <label for="workspace">Geoserver Workspace <span class="text-danger">*</span><span
-                                    class="text-danger"></span></label>
-                            <select class="form-control" id="workspace" name="workspace">
-                                <option value="">Select Workspace</option>
-                                <option value="agis">agis</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="row mt-3">
-                        <div class="col-md-6">
-                            <label for="dataStore">Geoserver DataStore <span class="text-danger">*</span><span
-                                    class="text-danger"></span></label>
-                            <select class="form-control" id="dataStore" name="data_store">
-                                <option value="">Select DataStore</option>
-                                <option value="catalog">catalog</option>
-                            </select>
-                        </div>
-                    </div>
+                   
 
 
                     <div class="row mt-3">
@@ -74,6 +54,9 @@
                             </div>
                         </div>
 
+                    </div>
+                     <div id="loading-spinner" style="display: none;">
+                        {{!-- <img src="spinner.gif" alt="Loading..." /> --}}
                     </div>
 
                     <input type="submit" name="submit" value="Upload" class="btn px-5 btn-primary mt-2">

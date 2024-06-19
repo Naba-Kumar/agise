@@ -16,21 +16,19 @@
             </div>
         </nav>
 
-        <main class="content px-3 py-2">
+        <main class="content px-3 py-2  bg-adminbg">
+            <div class="container-fluid p-4">
             <div class="input-group mb-3">
                 <input type="search" class="form-control " placeholder="Search" aria-label="Search"
                     aria-describedby="search-addon" />
-                <button type="button" class="btn btn-outline-primary" data-mdb-ripple-init>search</button>
+                <button type="button" class="btn btn-primary" data-mdb-ripple-init>search</button>
             </div>
 
-            <div class="card border-0">
+         <div class="card border-0 rounded">
                 <div class="card-header">
-                    <h5 class="card-title">
-                        Basic Table
-                    </h5>
-                    <h6 class="card-subtitle text-muted">
-                        Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum ducimus,
-                        necessitatibus reprehenderit itaque!
+                    
+                    <h6 class="card-subtitle text-muted p-4 text-center">
+                        Search User and view Profile!
                     </h6>
                 </div>
                 <div class="card-body">
@@ -186,7 +184,7 @@
                                 </div>
                             </div>
                             <tr>
-                                <th scope="row">1</th>
+                                <th scope="row">{{this.user_id}}</th>
                                 <td>{{this.first_name}} {{this.last_name}}</td>
                                 <td>{{this.email}}</td>
                                 <td>{{this.organization}}</td>
@@ -210,7 +208,6 @@
                     </table>
                 </div>
             </div>
-            <div class="container-fluid">
 
 
                 <!-- Table Element -->
