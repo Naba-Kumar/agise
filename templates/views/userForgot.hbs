@@ -1,6 +1,18 @@
 {{>userHeader}}
 
-<form id="forgotForm" action="/user/forgot" method="POST" enctype="multipart/form-data">
+<div class="row mt bg-adminbg rounded d-flex justify-content-center">
+        <a href="/user" class=" px-5 py-2 m-0 col-md-4 d-flex justify-content-center"> 
+            REGISTER
+        </a>
+        <a href="/user/Login" class=" px-5 py-2 m-0 col-md-4 d-flex justify-content-center"> 
+        LOGIN
+        </a>
+        <a href="/user/Forgot" class=" px-5 py-2 m-0 col-md-4 d-flex justify-content-center bg-cardbg">
+        UPDATE
+        </a>
+</div>
+
+<form id="forgotForm" action="/user/forgot" method="POST" enctype="multipart/form-data" class="mt-2">
 
     <div class="row">
         <div class="col-md-4">
