@@ -191,12 +191,26 @@ router.post('/requests', adminAuthMiddleware, async (req, res) => {
         let params = [];
 
         if (action === 'approve') {
-            query = `
+            update_query = `
                 UPDATE requests
                 SET is_checked=$1, request_status=$2, is_isolated=$3
                 WHERE email=$4 AND file_name=$5
             `;
             params = [true, true, false, email, file_name];
+            await client.query(update_query, params);
+
+
+        const insert_query = `
+                INSERT INTO useraccess( email, file_name)
+                VALUES ($1, $2)
+                    `;
+            const insert_values = [
+                email,
+                file_name
+            ];
+            await client.query(insert_query, insert_values);
+
+
         } else if (action === 'reject') {
             query = `
                 UPDATE requests
@@ -204,6 +218,8 @@ router.post('/requests', adminAuthMiddleware, async (req, res) => {
                 WHERE email=$4 AND file_name=$5
             `;
             params = [true, false, false, email, file_name];
+            await client.query(query, params);
+
         } else if (action === 'isolate') {
             query = `
                 UPDATE requests
@@ -211,9 +227,10 @@ router.post('/requests', adminAuthMiddleware, async (req, res) => {
                 WHERE email=$3 AND file_name=$4
             `;
             params = [true, true, email, file_name];
+            await client.query(query, params);
+
         }
 
-        await client.query(query, params);
 
         const data = { message: `Request ${action}d`, title: "Success", icon: "success" };
         return res.status(200).json(data);

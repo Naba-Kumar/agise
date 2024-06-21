@@ -12,6 +12,7 @@ const childProcess = require('child_process');
 const { exec } = childProcess;
 const AdmZip = require('adm-zip');
 const axios = require('axios');
+const fs = require('fs')
 
 const cookieParser = require('cookie-parser');
 const { log } = require('console');
@@ -106,7 +107,7 @@ router.get('/', async (req, res) => {
         const decodedToken = parseJwt(token);
         const currentTime = Math.floor(Date.now() / 1000);
 
-        
+
 
         if (!decodedToken || decodedToken.exp < currentTime) {
             client.release();
@@ -219,12 +220,61 @@ router.get('/request/:id', (req, res) => {
     // Logic to handle data request
 });
 
-router.get('/download/:id', (req, res) => {
-    if (!isAuthenticated(req) || !userHasRequestedData(req, id) || !adminHasApprovedRequest(req, id)) {
-        return res.status(403).send('Forbidden');
+router.post('/download/:id', userAuthMiddleware, async (req, res) => {
+    try {
+        console.log("foil");
+        const email = req.user.email;
+        const file_name = req.params.id;
+        const file_name_withext = `${file_name}.zip`;
+
+        const client = await pool.poolUser.connect();
+        const result = await client.query('SELECT * FROM useraccess WHERE email=$1 AND file_name=$2', [email, file_name]);
+        client.release();
+
+        if (result.rows.length > 0) {
+            const filePath = path.join(__dirname, '../../catalog', file_name_withext);
+
+            if (!fs.existsSync(filePath)) {
+                console.log(filePath);
+                const data = { message: 'File not found', icon: 'warning' };
+                return res.status(404).json(data); // Use 404 status code for file not found
+            }
+
+        
+            const stat = fs.statSync(filePath);
+
+            res.writeHead(200, {
+                'Content-Type': 'application/octet-stream',
+                'Content-Length': stat.size,
+                'Content-Disposition': `attachment; filename=${path.basename(file_name_withext)}`
+            });
+
+            const readStream = fs.createReadStream(filePath);
+            readStream.pipe(res);
+            // console.log(readStream)
+
+            readStream.on('error', (err) => {
+                console.error('Error reading file:', err);
+                if (!res.headersSent) {
+                    const data = { message: 'Error while reading file', icon: 'warning' };
+                    return res.status(500).json(data); // Use 500 status code for server error
+                }
+            });
+
+            res.on('close', () => {
+                console.log('Response finished');
+                readStream.destroy();
+            });
+
+        } else {
+            const data = { message: 'Forbidden', icon: 'warning' };
+            return res.status(403).json(data); // Use 403 status code for forbidden
+        }
+    } catch (error) {
+        console.error(error);
+        const data = { message: 'Internal server error', icon: 'error' };
+        return res.status(500).json(data); // Use 500 status code for server error
     }
-    const id = req.params.id;
-    // Logic to handle data download
 });
 
 

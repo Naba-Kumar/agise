@@ -60,25 +60,25 @@
                                         <a class="btn btn-primary text-white py-1 px-0 col-lg-4"
                                             id="request-{{@index}}"> Request </a>
                                         <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink"
-                                            href="">Download</a>
+                                            href="#">Download</a>
                                         {{else ifCond requestStatus '===' 'requested'}}
                                         {{!-- {{v1}} is not equal to {{v3}} --}}
                                         <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink"
                                             id="request-{{@index}}"> Requested </a>
                                         <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink"
-                                            href="">Download</a>
+                                            href="#">Download</a>
                                         {{else ifCond requestStatus '===' 'approved'}}
                                         {{!-- {{v1}} is not equal to {{v3}} --}}
                                         <a class="btn btn-success text-white py-1 px-0 col-lg-4 inactiveLink"
                                             id="request-{{@index}}"> Approved </a>
-                                        <a class="btn btn-success text-white py-1 px-0 col-lg-4 " href="">Download</a>
+                                        <button class="btn btn-success text-white py-1 px-0 col-lg-4 download-button" data-filename="{{this.file_name}}" id="download{{@index}}">Download</button>
 
                                         {{else ifCond requestStatus '===' 'rejected'}}
                                         {{!-- {{v1}} is not equal to {{v3}} --}}
                                         <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink"
                                             id="request-{{@index}}"> Rejected </a>
                                         <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink"
-                                            href="">Download</a>
+                                            href="#">Download</a>
                                         {{/ifCond}}
 
                                     </div>
@@ -134,7 +134,6 @@
                 fetch('/catalog/{{this.file_name}}', {
                     method: 'POST',
                     headers: {
-                        {{!-- 'Authorization': `Bearer ${token}`, --}}
                         'Content-Type': 'application/json',
                         // Add any other headers you need (e.g., authorization)
                     },
@@ -172,6 +171,52 @@
                 });
             });
             {{/each}}
+
+
+
+                const downloadButtons = document.querySelectorAll('.download-button');
+                downloadButtons.forEach(button => {
+                    button.addEventListener('click', function (event) {
+                        event.preventDefault(); // Prevent the default action
+                        
+                        const fileName = this.getAttribute('data-filename'); // Get filename from data attribute
+                        console.log("Clicked download for:", fileName);
+                        
+                        // Make a fetch request to download the file
+                        fetch(`/catalog/download/${fileName}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    // Add any other headers you need (e.g., authorization)
+                },
+                body: JSON.stringify({ file_name: fileName }) // Send filename in the request body
+                })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    
+                    // Handle response data as needed
+                    if (data) {
+                        // Process data
+                    } else {
+                        // Handle unexpected data format
+                    }
+                })
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                    // Handle fetch request error
+                });
+
+                        });
+                    });
+
+
+           
         });
     </script>
 </body>
