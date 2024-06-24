@@ -11,11 +11,10 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="/css/userStyle.css">
     <link rel="stylesheet" href="/css/bootstrap.min.css">
-    <link rel="stylesheet"
-        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/ol@v9.2.4/ol.css">
-    {{!-- <script src="/js/script.js"></script> --}}
+    <!-- <script src="/js/script.js"></script> -->
 </head>
 
 <body>
@@ -26,73 +25,56 @@
             <div class="text-center mx-auto mb-5 wow" style="max-width: 600px;">
                 <h1>Our Geospatial Data Catalog</h1>
             </div>
-               <section class="wrapper">
-        <div class="container-fostrap">
-
-            <div class="container-lg">
-                <div class="row">
+            <section class="wrapper">
+                <div class="container-fostrap">
+                    <div class="container-lg">
+                        <div class="row">
                             {{#each catalogItems}}
-
-                    <div class="col-xs-12 col-sm-3 mb-4">
-                        <div class="card">
-                            <a class="map-card">
-                                <div id="map-{{@index}}" class="map" style="height: 200px; width: 100%;"></div>
-                            </a>
-                            <div class="card-content">
-                                <p class="catalog-card-title">
-                                    <a>{{this.title}}
+                            <div class="col-xs-12 col-sm-3 mb-4">
+                                <div class="card">
+                                    <a class="map-card">
+                                        <div id="map-{{@index}}" class="map" style="height: 200px; width: 100%;"></div>
                                     </a>
-                                </p>
-                                <p class="catalog-card-desc">
-                                    {{this.description}}
-                                </p>
-                            </div>
-                            <div class="catalog-card-buttons">
-                                <div class="bg-light rounded h-100 p-1">
-                                    {{!-- <p class="mb-3 p-4">{{this.file_name}}</p> --}}
-                                    <div id="btn-txt-catalog" class="small">
-
-                                        <a class="btn btn-primary text-white py-1 px-0 col-lg-3"
-                                            href="/catalog/{{this.file_name}}">View</a>
-                                        {{#ifCond requestStatus '===' 'request'}}
-                                        {{!-- {{v1}} is equal to {{v2}} --}}
-
-                                        <a class="btn btn-primary text-white py-1 px-0 col-lg-4"
-                                            id="request-{{@index}}"> Request </a>
-                                        <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink"
-                                            href="#">Download</a>
-                                        {{else ifCond requestStatus '===' 'requested'}}
-                                        {{!-- {{v1}} is not equal to {{v3}} --}}
-                                        <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink"
-                                            id="request-{{@index}}"> Requested </a>
-                                        <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink"
-                                            href="#">Download</a>
-                                        {{else ifCond requestStatus '===' 'approved'}}
-                                        {{!-- {{v1}} is not equal to {{v3}} --}}
-                                        <a class="btn btn-success text-white py-1 px-0 col-lg-4 inactiveLink"
-                                            id="request-{{@index}}"> Approved </a>
-                                        <button class="btn btn-success text-white py-1 px-0 col-lg-4 download-button" data-filename="{{this.file_name}}" id="download{{@index}}">Download</button>
-
-                                        {{else ifCond requestStatus '===' 'rejected'}}
-                                        {{!-- {{v1}} is not equal to {{v3}} --}}
-                                        <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink"
-                                            id="request-{{@index}}"> Rejected </a>
-                                        <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink"
-                                            href="#">Download</a>
-                                        {{/ifCond}}
-
+                                    <div class="card-content">
+                                        <p class="catalog-card-title">
+                                            <a>{{this.title}}</a>
+                                        </p>
+                                        <p class="catalog-card-desc">
+                                            {{this.description}}
+                                        </p>
+                                    </div>
+                                    <div class="catalog-card-buttons">
+                                        <div class="bg-light rounded h-100 p-1">
+                                            <!-- <p class="mb-3 p-4">{{this.file_name}}</p> -->
+                                            <div id="btn-txt-catalog" class="small">
+                                                <a class="btn btn-primary text-white py-1 px-0 col-lg-3" href="/catalog/{{this.file_name}}">View</a>
+                                                {{#ifCond requestStatus '===' 'request'}}
+                                                <!-- {{v1}} is equal to {{v2}} -->
+                                                <a class="btn btn-primary text-white py-1 px-0 col-lg-4" id="request-{{@index}}">Request</a>
+                                                <a class="btn btn-secondary text-white py-1 px-0 col-lg-4 inactiveLink" href="#">Download</a>
+                                                {{else ifCond requestStatus '===' 'requested'}}
+                                                <!-- {{v1}} is not equal to {{v3}} -->
+                                               <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}">Requested</a>
+                                                <a class="btn btn-warning text-white py-1 px-0 col-lg-4 inactiveLink" href="#">Download</a>
+                                                {{else ifCond requestStatus '===' 'approved'}}
+                                                <!-- {{v1}} is not equal to {{v3}} -->
+                                                <a class="btn btn-success text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}">Approved</a>
+                                                <a class="btn btn-success text-white py-1 px-0 col-lg-4 download-button" data-filename="{{this.file_name}}" id="download{{@index}}">Download</a>
+                                                {{else ifCond requestStatus '===' 'rejected'}}
+                                                <!-- {{v1}} is not equal to {{v3}} -->
+                                                <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink" id="request-{{@index}}">Rejected</a>
+                                                <a class="btn btn-danger text-white py-1 px-0 col-lg-4 inactiveLink" href="#">Download</a>
+                                                {{/ifCond}}
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
+                            {{/each}}
                         </div>
                     </div>
-
-
-                            {{/each}}
                 </div>
-            </div>
-        </div>
-    </section>
+            </section>
         </div>
     </div>
     <!-- Service End -->
@@ -103,7 +85,7 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function () {
-            {{#each catalogItems }}
+            {{#each catalogItems}}
             const map{{@index}} = new ol.Map({
                 target: 'map-{{@index}}',
                 layers: [
@@ -129,7 +111,7 @@
             {{#each catalogItems}}
             document.getElementById('request-{{@index}}').addEventListener('click', function () {
                 const fileName = '{{this.file_name}}'; // Get the value dynamically
-                console.log("hii")
+                console.log("hi");
                 // Make a POST request to your server
                 fetch('/catalog/{{this.file_name}}', {
                     method: 'POST',
@@ -141,10 +123,9 @@
                 })
                 .then(response => response.json())
                 .then(data => {
-                    
                     console.log('Response data:', data);
                     if (data) {
-                        console.log(data.message)
+                        console.log(data.message);
                         Swal.fire({
                             title: data.title,
                             text: data.message,
@@ -152,9 +133,9 @@
                             icon: data.icon
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                {{!-- if (data.redirect != undefined) { --}}
+                                if (data.redirect !== undefined) {
                                     window.location.reload(); // Replace with your desired URL
-                                {{!-- } --}}
+                                }
                             }
                         });
                     } else {
@@ -172,51 +153,77 @@
             });
             {{/each}}
 
+            const downloadButtons = document.querySelectorAll('.download-button');
+            downloadButtons.forEach(button => {
+                button.addEventListener('click', async function (event) {
+                    event.preventDefault(); // Prevent the default action
 
+                    const fileName = this.getAttribute('data-filename'); // Get filename from data attribute
+                    console.log("Clicked download for:", fileName);
 
-                const downloadButtons = document.querySelectorAll('.download-button');
-                downloadButtons.forEach(button => {
-                    button.addEventListener('click', function (event) {
-                        event.preventDefault(); // Prevent the default action
-                        
-                        const fileName = this.getAttribute('data-filename'); // Get filename from data attribute
-                        console.log("Clicked download for:", fileName);
-                        
-                        // Make a fetch request to download the file
-                        fetch(`/catalog/download/${fileName}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    // Add any other headers you need (e.g., authorization)
-                },
-                body: JSON.stringify({ file_name: fileName }) // Send filename in the request body
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log('Response data:', data);
-                    
-                    // Handle response data as needed
-                    if (data) {
-                        // Process data
-                    } else {
-                        // Handle unexpected data format
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                    // Handle fetch request error
-                });
-
+                    // Make a fetch request to download the file
+                    try {
+                        const response = await fetch(`/catalog/download/${fileName}`, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
                         });
-                    });
 
+                        if (response.status === 403) {
+                            Swal.fire({
+                            title: "Oops?",
+                            text: "Forbidden: You do not have access to this file.",
+                            confirmButtonText: "OK",
+                            icon: "alert"
+                        })
+                            console.warn('Forbidden: You do not have access to this file.');
+                            return;
+                        }
 
-           
+                        if (response.status === 404) {
+                            Swal.fire({
+                            title: "Oops?",
+                            text: "File not found.",
+                            confirmButtonText: "OK",
+                            icon: "alert"
+                            })
+                            console.warn('File not found.');
+                            return;
+                        }
+
+                        if (!response.ok) {
+                            Swal.fire({
+                            title: "Oops?",
+                            text: "Failed to download the file.",
+                            confirmButtonText: "OK",
+                            icon: "alert"
+                            })
+                            console.error('Failed to download the file.');
+                            return;
+                        }
+
+                        const blob = await response.blob();
+                        const link = document.createElement('a');
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = `${fileName}.zip`; // Set the desired file name here
+                        link.click();
+
+                        // Clean up
+                        window.URL.revokeObjectURL(link.href);
+                        link.remove();
+                    } catch (error) {
+
+                            Swal.fire({
+                            title: "Oops?",
+                            text: "Failed to download the file.",
+                            confirmButtonText: "OK",
+                            icon: "error"
+                            })
+                        console.error('An error occurred while downloading the file:', error);
+                    }
+                });
+            });
         });
     </script>
 </body>
